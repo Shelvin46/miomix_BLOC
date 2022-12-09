@@ -100,6 +100,7 @@ class _FavoritePagelistState extends State<FavoritePagelist> {
                     child: CircularProgressIndicator(),
                   );
                 }
+                return
               },
               child: ListView.separated(
                   shrinkWrap: true,
