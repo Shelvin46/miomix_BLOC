@@ -100,9 +100,7 @@ class _FavoritePagelistState extends State<FavoritePagelist> {
                     child: CircularProgressIndicator(),
                   );
                 }
-                return
-              },
-              child: ListView.separated(
+                return ListView.separated(
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
                     return ListTile(
@@ -164,6 +162,8 @@ class _FavoritePagelistState extends State<FavoritePagelist> {
                     return const Divider();
                   },
                   itemCount: 15),
+              },
+              child: 
             ),
           )
         ],
