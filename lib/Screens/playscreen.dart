@@ -4,42 +4,50 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:marquee/marquee.dart';
 import 'package:miomix/Models/allsonglist.dart';
-import 'package:miomix/Screens/splashscreen.dart';
+import 'package:miomix/favourites/addfromnow.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
+// ignore: must_be_immutable
 class MusicPlayScreen extends StatefulWidget {
-  const MusicPlayScreen({super.key});
+  int index;
+  MusicPlayScreen({super.key, required this.index});
 
   @override
   State<MusicPlayScreen> createState() => _MusicPlayScreenState();
 }
 
 class _MusicPlayScreenState extends State<MusicPlayScreen> {
-  // Duration duration = Duration.zero;
-  // Duration position = Duration.zero;
-  // bool isplaying = false;
   bool isRepeat = false;
   bool isNext = false;
+  // late final List<Audio> songList;
   late List<Songs> dbsongs;
   final box = Songbox.getInstance();
   bool click = true;
   AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
+
   @override
   void initState() {
     setState(() {});
-
     dbsongs = box.values.toList();
     super.initState();
-
     setState(() {});
   }
+
+  // Audio find(List<Audio> source, String fromPath) {
+  //   return source.firstWhere((element) {
+  //     return element.path == fromPath;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     final height1 = MediaQuery.of(context).size.height;
     final width1 = MediaQuery.of(context).size.width;
     return player.builderCurrent(builder: (context, playing) {
+      // final myAudio = find(widget.index., playing.audio.assetAudioPath);
+      // myAudio = find(widget.index, playing.audio.assetAudioPath);
       // here we need to build the screen what we played from assetaudioplayer
+
       return Scaffold(
           backgroundColor: const Color.fromARGB(255, 23, 63, 97),
           body: Column(children: [
@@ -79,20 +87,12 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                    onPressed: () {
-                      setState(
-                        () {
-                          click = !click;
-                        },
-                      );
-                      // favoriteAdded(context);
-                    },
-                    icon: Icon(
-                      (click == false) ? Icons.favorite : Icons.favorite_border,
-                      color: Colors.white,
-                      size: 35,
-                    )),
+                player.builderCurrent(builder: (context, playing) {
+                  return AddFavNowScreen(
+                      index: dbsongs.indexWhere((element) =>
+                          element.songname == playing.audio.audio.metas.title));
+                }),
+                // AddFavNowScreen(index: playing.index),
                 IconButton(
                   onPressed: () {
                     // playlistAdded(context);
@@ -454,7 +454,177 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
   //   );
   // }
 }
-//how to pass music from  a list to playing screen?
+//how to set now playing screen of music player using flutter?
+
+//import 'package:flutter/material.dart';
+
+// void main() {
+//   runApp(MyApp());
+// }
+
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       theme: ThemeData.dark().copyWith(
+//         scaffoldBackgroundColor: Colors.black,
+//       ),
+//       debugShowCheckedModeBanner: false,
+//       home: Scaffold(
+//         backgroundColor: Colors.black,
+//         body: Align(
+//           alignment: Alignment.bottomCenter,
+//           child: MyWidget(),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class MyWidget extends StatelessWidget {
+//   // Get the the seconds from current minute.
+//   //
+//   // TODO: Make this your actual progress indicator
+//   Stream<int> getSecondsFromCurrentMinute() async* {
+//     final now = DateTime.now();
+//     final seconds = now.second;
+//     yield seconds;
+//     await Future.delayed(Duration(seconds: 1 - seconds));
+//     yield* getSecondsFromCurrentMinute();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return FractionallySizedBox(
+//       heightFactor: .15,
+//       widthFactor: 1,
+//       child: Row(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           // Song cover
+//           Container(
+//             width: 40,
+//             height: 40,
+//             decoration: BoxDecoration(
+//                 color: Colors.white, borderRadius: BorderRadius.circular(10)),
+//           ),
+
+//           // Padding
+//           SizedBox(width: 15),
+
+//           // Title and artist
+//           Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               // Title
+//               Text(
+//                 "AUD-20190208-WA0007",
+//                 style: Theme.of(context).textTheme.headline5,
+//               ),
+//               // Artist
+//               Text(
+//                 "Unknown artist",
+//                 style: Theme.of(context)
+//                     .textTheme
+//                     .bodyText2
+//                     ?.copyWith(color: Colors.grey.withOpacity(.6)),
+//               ),
+//             ],
+//           ),
+
+//           // Padding between first 2 columns and Icons
+//           Expanded(child: SizedBox.expand()),
+
+//           //
+//           // Play button and progress indicator
+//           //
+//           StreamBuilder<int>(
+//               stream: getSecondsFromCurrentMinute(),
+//               builder: (context, AsyncSnapshot<int> snapshot) {
+//                 double percentageOfSecond = (snapshot.data ?? 0) / 60;
+
+//                 return Container(
+//                   width: 40,
+//                   height: 40,
+//                   child: Stack(
+//                     children: [
+//                       // the circle showing progress
+//                       Positioned(
+//                         top: 0,
+//                         left: 0,
+//                         child: Container(
+//                           width: 40,
+//                           height: 40,
+//                           child: CircularProgressIndicator(
+//                             value: percentageOfSecond,
+//                             valueColor: AlwaysStoppedAnimation<Color>(
+//                               Colors.red,
+//                             ),
+//                             backgroundColor: Colors.red.withOpacity(0.15),
+//                           ),
+//                         ),
+//                       ),
+//                       // the play arrow, inside the circle
+//                       Positioned(
+//                         top: 0,
+//                         left: 0,
+//                         child: Container(
+//                           width: 35,
+//                           height: 35,
+//                           child: IconButton(
+//                             icon: Icon(
+//                               Icons.play_arrow,
+//                               color: Colors.red,
+//                             ),
+//                             onPressed: () {},
+//                           ),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 );
+//               }),
+
+//           SizedBox(width: 8),
+
+//           Container(
+//             width: 40,
+//             height: 40,
+//             child: GestureDetector(
+//               onTap: () {},
+//               child: Icon(
+//                 Icons.skip_next,
+//                 color: Colors.red,
+//               ),
+//             ),
+//           ),
+
+//           //
+//           SizedBox(width: 8),
+
+//           Container(
+//             width: 40,
+//             height: 40,
+//             child: GestureDetector(
+//               onTap: () {},
+//               child: Icon(
+//                 Icons.menu,
+//                 color: Colors.red,
+//                 size: 35,
+//               ),
+//             ),
+//           ),
+
+//           // Extra padding at the end of the row
+//           SizedBox(width: 30),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+
+
 
 
 
