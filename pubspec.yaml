@@ -47,6 +47,7 @@ dependencies:
   hive_flutter: ^1.1.0
   assets_audio_player: 
   
+  
 
 dev_dependencies:
   flutter_test:
