@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:miomix/Models/dbfunction.dart';
 import 'package:miomix/Models/recentlyplayed.dart';
 import 'package:miomix/Screens/playscreen.dart';
+import 'package:miomix/favourites/favadd.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class RecentlyPlayedScreen extends StatefulWidget {
@@ -131,7 +132,9 @@ class _RecentlyPlayedScreenState extends State<RecentlyPlayedScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: ((context) => const MusicPlayScreen()),
+                                builder: ((context) => MusicPlayScreen(
+                                      index: index,
+                                    )),
                               ),
                             );
                           },
@@ -176,14 +179,32 @@ class _RecentlyPlayedScreenState extends State<RecentlyPlayedScreen> {
                                 context: context,
                                 builder: ((context) {
                                   return SizedBox(
-                                    height: 130,
+                                    height: 150 /* height * 0.13 */,
                                     child: Column(
-                                      children: const [
-                                        // AddToPlalistbutton(songindex: index),
+                                      children: [
+                                        SizedBox(
+                                          height: height1 * 0.05,
+                                        ),
+                                        const Text(
+                                          'Add To Playlist',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: height1 * 0.011,
+                                        ),
 
-                                        // addToFavorite(
-                                        //   index: index,
-                                        // )
+                                        AddtoFavourite(index: index),
+
+                                        // child: const Text(
+                                        //   'Add to Favourites',
+                                        //   style: TextStyle(
+                                        //     color: Colors.white,
+                                        //     fontSize: 18,
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                   );
@@ -213,3 +234,5 @@ class _RecentlyPlayedScreenState extends State<RecentlyPlayedScreen> {
     );
   }
 }
+//how to set inkwell in flutter?
+

@@ -87,6 +87,33 @@ class _MosltlyPlayedScreenState extends State<MosltlyPlayedScreen> {
                               fontWeight: FontWeight.bold),
                         ),
                       ),
+                      SizedBox(
+                        width: width1 * 0.2,
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            AlertDialog(
+                              title: const Text('Clear the Songs'),
+                              content: const Text('Are You Sure ?'),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Cancel')),
+                                TextButton(
+                                    onPressed: () {
+                                      mostlyplayedbox.clear();
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Remove'))
+                              ],
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ))
                     ],
                   ),
                 ],
@@ -122,7 +149,9 @@ class _MosltlyPlayedScreenState extends State<MosltlyPlayedScreen> {
                               setState(() {});
                               Navigator.push(context, MaterialPageRoute(
                                 builder: (context) {
-                                  return const MusicPlayScreen();
+                                  return MusicPlayScreen(
+                                    index: index,
+                                  );
                                 },
                               ));
                             },

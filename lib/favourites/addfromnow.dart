@@ -1,11 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:miomix/Models/dbfunction.dart';
 import 'package:miomix/Models/favourite.dart';
-
+import 'package:miomix/favourites/favoritelist.dart';
 import '../Models/allsonglist.dart';
 
 class AddFavNowScreen extends StatefulWidget {
@@ -58,10 +56,12 @@ class _AddFavNowScreenState extends State<AddFavNowScreen> {
             ),
           )
         : IconButton(
-            onPressed: () async {
+            onPressed: () {
               int currentIndex = fsongs.indexWhere(
                   (element) => element.id == dbsongs[widget.index].id);
-              await favsongbox.deleteAt(currentIndex);
+              player.playlist!.audios.removeAt(currentIndex);
+              log(currentIndex.toString());
+              favsongbox.deleteAt(currentIndex);
               setState(() {});
               // Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
