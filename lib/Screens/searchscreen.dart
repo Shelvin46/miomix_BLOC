@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:miomix/Screens/mainscreen.dart';
-import 'package:miomix/Screens/playscreen.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
@@ -96,82 +92,82 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  miniPlayer(context) {
-    final height1 = MediaQuery.of(context).size.height;
-    final width1 = MediaQuery.of(context).size.width;
-    return Row(
-      children: [
-        InkWell(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return const MusicPlayScreen();
-                },
-              ),
-            );
-          },
-          child: Expanded(
-            child: Container(
-              width: width1 * 1.00,
-              height: height1 * 0.10,
-              // height: 80,
-              // width: 387.3,
-              color: const Color.fromARGB(255, 28, 97, 150),
-              child: Row(
-                children: [
-                  // const SizedBox(
-                  //   width: 18,
-                  // ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        width1 * 0.0400, 0, 0, height1 * 0.00010),
-                    child: const CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage('assets/images/splash.jpg'),
-                    ),
-                  ),
+  // miniPlayer(context) {
+  //   final height1 = MediaQuery.of(context).size.height;
+  //   final width1 = MediaQuery.of(context).size.width;
+  //   return Row(
+  //     children: [
+  //       InkWell(
+  //         onTap: () {
+  //           Navigator.of(context).push(
+  //             MaterialPageRoute(
+  //               builder: (context) {
+  //                 return  MusicPlayScreen(index:,);
+  //               },
+  //             ),
+  //           );
+  //         },
+  //         child: Expanded(
+  //           child: Container(
+  //             width: width1 * 1.00,
+  //             height: height1 * 0.10,
+  //             // height: 80,
+  //             // width: 387.3,
+  //             color: const Color.fromARGB(255, 28, 97, 150),
+  //             child: Row(
+  //               children: [
+  //                 // const SizedBox(
+  //                 //   width: 18,
+  //                 // ),
+  //                 Padding(
+  //                   padding: EdgeInsets.fromLTRB(
+  //                       width1 * 0.0400, 0, 0, height1 * 0.00010),
+  //                   child: const CircleAvatar(
+  //                     radius: 30,
+  //                     backgroundImage: AssetImage('assets/images/splash.jpg'),
+  //                   ),
+  //                 ),
 
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        width1 * 0.1000, 0, 0, height1 * 0.00010),
-                    child: const Text(
-                      'Music 1',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                  ),
+  //                 Padding(
+  //                   padding: EdgeInsets.fromLTRB(
+  //                       width1 * 0.1000, 0, 0, height1 * 0.00010),
+  //                   child: const Text(
+  //                     'Music 1',
+  //                     style: TextStyle(color: Colors.white, fontSize: 20),
+  //                   ),
+  //                 ),
 
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        width1 * 0.13, 0, 0, height1 * 0.00010),
-                    child: const Icon(
-                      Icons.skip_previous,
-                      color: Colors.white,
-                      size: 50,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        width1 * 0.00300, 0, 0, height1 * 0.00010),
-                    child: const Icon(
-                      Icons.pause,
-                      color: Colors.white,
-                      size: 50,
-                    ),
-                  ),
-                  const Icon(
-                    Icons.skip_next,
-                    color: Colors.white,
-                    size: 50,
-                  )
-                ],
-              ),
-            ),
-          ),
-        )
-      ],
-    );
-  }
+  //                 Padding(
+  //                   padding: EdgeInsets.fromLTRB(
+  //                       width1 * 0.13, 0, 0, height1 * 0.00010),
+  //                   child: const Icon(
+  //                     Icons.skip_previous,
+  //                     color: Colors.white,
+  //                     size: 50,
+  //                   ),
+  //                 ),
+  //                 Padding(
+  //                   padding: EdgeInsets.fromLTRB(
+  //                       width1 * 0.00300, 0, 0, height1 * 0.00010),
+  //                   child: const Icon(
+  //                     Icons.pause,
+  //                     color: Colors.white,
+  //                     size: 50,
+  //                   ),
+  //                 ),
+  //                 const Icon(
+  //                   Icons.skip_next,
+  //                   color: Colors.white,
+  //                   size: 50,
+  //                 )
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       )
+  //     ],
+  //   );
+  // }
 
   listView(context) {
     final height1 = MediaQuery.of(context).size.height;

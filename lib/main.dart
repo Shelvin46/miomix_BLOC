@@ -6,6 +6,7 @@ import 'package:miomix/Models/mostlyplayed.dart';
 import 'package:miomix/Models/recentlyplayed.dart';
 import 'package:miomix/Screens/splashscreen.dart';
 import 'Models/allsonglist.dart';
+import 'Models/playlistmpdel.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,10 +19,15 @@ Future<void> main() async {
   runApp(const MyApp());
   Hive.registerAdapter(RecentPlayedAdapter());
   openrecentlyplayedDb(); //function for open the box recetly played
+
   Hive.registerAdapter(MostPlayedAdapter());
   openMostlyPlayedDb();
+
   Hive.registerAdapter(FavSongsAdapter());
   openFavouritePlayedDb();
+
+  Hive.registerAdapter(PlaylistSongsAdapter());
+  opendatabase();
 }
 
 class MyApp extends StatelessWidget {

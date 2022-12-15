@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:marquee/marquee.dart';
 import 'package:miomix/Models/allsonglist.dart';
+import 'package:miomix/Playlists/addfromnow.dart';
 import 'package:miomix/favourites/addfromnow.dart';
+import 'package:miomix/favourites/favoritelist.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 // ignore: must_be_immutable
@@ -18,12 +20,14 @@ class MusicPlayScreen extends StatefulWidget {
 
 class _MusicPlayScreenState extends State<MusicPlayScreen> {
   bool isRepeat = false;
+  // final List<Audio> songList = [];
   bool isNext = false;
   // late final List<Audio> songList;
   late List<Songs> dbsongs;
   final box = Songbox.getInstance();
   bool click = true;
-  AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
+  //AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
+  // late final AssetsAudioPlayer player;
 
   @override
   void initState() {
@@ -44,6 +48,8 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
     final height1 = MediaQuery.of(context).size.height;
     final width1 = MediaQuery.of(context).size.width;
     return player.builderCurrent(builder: (context, playing) {
+      // final myAudio =
+      //     find(playing.playlist.audios, playing.audio.assetAudioPath);
       // final myAudio = find(widget.index., playing.audio.assetAudioPath);
       // myAudio = find(widget.index, playing.audio.assetAudioPath);
       // here we need to build the screen what we played from assetaudioplayer
@@ -92,17 +98,18 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
                       index: dbsongs.indexWhere((element) =>
                           element.songname == playing.audio.audio.metas.title));
                 }),
+                AddtoPlaylist2(songIndex: playing.index)
                 // AddFavNowScreen(index: playing.index),
-                IconButton(
-                  onPressed: () {
-                    // playlistAdded(context);
-                  },
-                  icon: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                    size: 35,
-                  ),
-                ),
+                // IconButton(
+                //   onPressed: () {
+                //     // playlistAdded(context);
+                //   },
+                //   icon: const Icon(
+                //     Icons.add,
+                //     color: Colors.white,
+                //     size: 35,
+                //   ),
+                // ),
               ],
             ),
             const SizedBox(
@@ -222,15 +229,7 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
                                   player.pause();
                                   setState(() {});
                                 }
-                              }
-
-                        // onPressed: () async {
-                        //   await player.seekBy(const Duration(seconds: -10));
-                        // },
-                        // icon: const Icon(Icons.replay_10),
-                        // color: Colors.white,
-                        // iconSize: 30,
-                        );
+                              });
                   },
                 ),
                 //<----------------------------------------------------------Previous Play

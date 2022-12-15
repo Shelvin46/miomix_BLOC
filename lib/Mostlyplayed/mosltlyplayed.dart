@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:miomix/Models/dbfunction.dart';
-import 'package:miomix/Screens/miniplayer.dart';
 import 'package:miomix/Screens/playscreen.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import '../Models/mostlyplayed.dart';
@@ -90,30 +89,38 @@ class _MosltlyPlayedScreenState extends State<MosltlyPlayedScreen> {
                       SizedBox(
                         width: width1 * 0.2,
                       ),
-                      IconButton(
-                          onPressed: () {
-                            AlertDialog(
-                              title: const Text('Clear the Songs'),
-                              content: const Text('Are You Sure ?'),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Cancel')),
-                                TextButton(
-                                    onPressed: () {
-                                      mostlyplayedbox.clear();
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Remove'))
-                              ],
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.delete,
-                            color: Colors.white,
-                          ))
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     showDialog(
+                      //       context: context,
+                      //       builder: (context) {
+                      //         return AlertDialog(
+                      //           title: const Text("Remove all Songs"),
+                      //           content: const Text("Are You Sure ?"),
+                      //           actions: [
+                      //             TextButton(
+                      //                 onPressed: () {
+                      //                   Navigator.pop(context);
+                      //                 },
+                      //                 child: const Text("Cancel")),
+                      //             TextButton(
+                      //                 onPressed: () {
+                      //                   // mostlyplayedbox.clear()
+                      //                   Navigator.pop(context);
+                      //                 },
+                      //                 child: const Text("Remove"))
+                      //           ],
+                      //         );
+                      //       },
+                      //     );
+                      //   },
+                      //   child: const Icon(
+                      //     Icons.delete,
+                      //     color: Colors.white,
+
+                      //     // color: Color(Colors.white)
+                      //   ),
+                      // ),
                     ],
                   ),
                 ],

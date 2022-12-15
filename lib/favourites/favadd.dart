@@ -1,15 +1,16 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:developer';
+
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:miomix/Models/dbfunction.dart';
+import 'package:miomix/favourites/favhome.dart';
 
 import '../Models/allsonglist.dart';
 import '../Models/favourite.dart';
 
 class AddtoFavourite extends StatefulWidget {
   int index;
-  AddtoFavourite({super.key, required this.index});
+  AddtoFavourite({super.key, required this.index}); //here pass the index
 
   @override
   State<AddtoFavourite> createState() => _AddtoFavouriteState();
@@ -17,7 +18,7 @@ class AddtoFavourite extends StatefulWidget {
 
 class _AddtoFavouriteState extends State<AddtoFavourite> {
   List<FavSongs> fav = [];
-  bool favorited = false;
+  // bool favorited = false;
   final box = Songbox.getInstance();
   late List<Songs> dbsongs;
   @override
@@ -29,20 +30,23 @@ class _AddtoFavouriteState extends State<AddtoFavourite> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {});
     fav = favsongbox.values.toList();
     return fav
-            .where(
-                (element) => element.songname == dbsongs[widget.index].songname)
-            .isEmpty
+            .where((element) => element.id == dbsongs[widget.index].id)
+            .isEmpty //here we checking the fav songs list if any song matches to songs list song the song will never add/is it empty the index song will be added.
         ? TextButton(
             onPressed: () {
-              favsongbox.add(FavSongs(
-                  songname: dbsongs[widget.index].songname,
-                  artist: dbsongs[widget.index].artist,
-                  duration: dbsongs[widget.index].duration,
-                  songurl: dbsongs[widget.index].songurl,
-                  id: dbsongs[widget.index].id));
-              setState(() {});
+              favsongbox.add(
+                FavSongs(
+                    songname: dbsongs[widget.index].songname,
+                    artist: dbsongs[widget.index].artist,
+                    duration: dbsongs[widget.index].duration,
+                    songurl: dbsongs[widget.index].songurl,
+                    id: dbsongs[widget.index].id),
+              );
+              // favosongs = convertAudio();
+              //convertAudio();
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Added to Favorites")));
@@ -56,8 +60,24 @@ class _AddtoFavouriteState extends State<AddtoFavourite> {
               setState(() {});
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Removed From Favourites")));
+                const SnackBar(
+                  content: Text("Removed From Favourites"),
+                ),
+              );
             },
             child: const Text("Remove From Favourites"));
   }
 }
+
+
+// convertAudio() {
+//   for (var item in favousongs) {
+//     favosongs.add(Audio.file(item.songurl.toString(),
+//         metas: Metas(
+//           artist: item.artist,
+//           title: item.songname,
+//           id: item.id.toString(),
+//         )));
+//   }
+//   return favosongs;
+// }

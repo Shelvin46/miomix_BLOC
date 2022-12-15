@@ -11,9 +11,6 @@ import 'package:miomix/Screens/playscreen.dart';
 import 'package:miomix/favourites/favadd.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-List<Audio> favosongs = [];
-List<FavSongs> favousongs = favsongbox.values.toList();
-
 class FavHomeList extends StatefulWidget {
   const FavHomeList({
     super.key,
@@ -24,34 +21,30 @@ class FavHomeList extends StatefulWidget {
 }
 
 class _FavHomeListState extends State<FavHomeList> {
+  List<Audio> favosongs = [];
   AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
 
   // List<FavSongs> fasongs = [];
   @override
   void initState() {
-    setState(() {});
-    //log(favosongs.toString());
-
-    // for (var item in favousongs) {
-    //   favosongs.add(Audio.file(item.songurl.toString(),
-    //       metas: Metas(
-    //         artist: item.artist,
-    //         title: item.songname,
-    //         id: item.id.toString(),
-    //       )));
-    // }
+    List<FavSongs> favousongs = favsongbox.values.toList();
+    for (var item in favousongs) {
+      favosongs.add(Audio.file(item.songurl.toString(),
+          metas: Metas(
+            artist: item.artist,
+            title: item.songname,
+            id: item.id.toString(),
+          )));
+    }
+    //favosongs = convertAudio();
+    log(favosongs.toString());
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // setState(() {
-    //   favosongs = convertAudio();
-    //   //log(favosongs.toString());
-    // });
-    //favosongs.clear();
-
+    //setState(() {});
     final height1 = MediaQuery.of(context).size.height;
     final width1 = MediaQuery.of(context).size.width;
     return Column(

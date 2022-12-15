@@ -14,7 +14,9 @@ import 'package:miomix/Recentlyplayed/recentlyplayed.dart';
 import 'package:miomix/Screens/allsonglist.dart';
 import 'package:miomix/Screens/miniplayer.dart';
 import 'package:miomix/Screens/playscreen.dart';
+import 'package:miomix/Screens/splashscreen.dart';
 import 'package:miomix/Settingscreen/settingscreen.dart';
+import 'package:miomix/favourites/favhome.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 // import 'package:audioplayers/audio_cache.dart';
@@ -61,6 +63,7 @@ class _ListScreenState extends State<ListScreen> {
   Widget build(BuildContext context) {
     final height1 = MediaQuery.of(context).size.height;
     final width1 = MediaQuery.of(context).size.width;
+
     return Scaffold(
       bottomSheet: const MiniPlayer(),
       // bottomSheet: miniPlayer(),
@@ -218,19 +221,8 @@ class _ListScreenState extends State<ListScreen> {
               const SizedBox(
                 height: 20,
               ),
-              Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        width1 * 0.0100, 0, 0, height1 * 0.00010),
-                    child: const Text(
-                      '     Your Favourites',
-                      style: TextStyle(color: Colors.white, fontSize: 22),
-                    ),
-                  ),
-                ],
-              ),
-              favoritesHomeListing(),
+              FavHomeList(),
+
               Row(
                 children: [
                   Padding(
@@ -252,7 +244,7 @@ class _ListScreenState extends State<ListScreen> {
               const AllSongList(),
               // listView(),
               //miniPlayer()
-              const SizedBox(height: 80),
+              const SizedBox(height: 100),
             ],
           ),
         ),

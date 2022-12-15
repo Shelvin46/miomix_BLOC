@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:miomix/Models/favourite.dart';
 import 'package:miomix/Models/mostlyplayed.dart';
+import 'package:miomix/Models/playlistmpdel.dart';
 import 'package:miomix/Models/recentlyplayed.dart';
 
 late Box<RecentPlayed> recentlyplayedbox;
@@ -18,6 +19,11 @@ openFavouritePlayedDb() async {
   favsongbox = await Hive.openBox('Favouritesongs');
 }
 
+late Box<PlaylistSongs> playlistbox;
+opendatabase() async {
+  playlistbox = await Hive.openBox<PlaylistSongs>('playlist');
+}
+
 updateRecentlyPlayed(RecentPlayed value, index) {
   List<RecentPlayed> list = recentlyplayedbox.values.toList();
   bool isAlready = list.where(
@@ -28,7 +34,6 @@ updateRecentlyPlayed(RecentPlayed value, index) {
       //is Already comes to true
     },
   ).isEmpty;
-
   if (isAlready == true) {
     recentlyplayedbox.add(value);
   } else {

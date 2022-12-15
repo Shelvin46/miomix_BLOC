@@ -1,14 +1,18 @@
+import 'dart:developer';
+
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:miomix/Models/dbfunction.dart';
 import 'package:miomix/Models/favourite.dart';
+import 'package:miomix/Screens/playscreen.dart';
+import 'package:on_audio_query/on_audio_query.dart';
+
+AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
 
 class FavoritePagelist extends StatefulWidget {
-  FavoritePagelist({super.key});
+  const FavoritePagelist({super.key});
 
   @override
   State<FavoritePagelist> createState() => _FavoritePagelistState();
@@ -16,7 +20,7 @@ class FavoritePagelist extends StatefulWidget {
 
 class _FavoritePagelistState extends State<FavoritePagelist> {
   List<Audio> fsongs = [];
-  AssetsAudioPlayer audioPlayer = AssetsAudioPlayer.withId('0');
+
   @override
   void initState() {
     List<FavSongs> fasongs = favsongbox.values.toList();
@@ -75,6 +79,8 @@ class _FavoritePagelistState extends State<FavoritePagelist> {
               valueListenable: favsongbox.listenable(),
               builder: (context, Box<FavSongs> favsongs, child) {
                 List<FavSongs> allDbSongs = favsongs.values.toList();
+                //List<FavSongs> allfavSongs = favsongbox.values.toList();
+
                 //----------------------------------------If songs are not there--------------------------------------------------
                 if (favsongbox.isEmpty) {
                   return Padding(
@@ -101,69 +107,106 @@ class _FavoritePagelistState extends State<FavoritePagelist> {
                   );
                 }
                 return ListView.separated(
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      leading: const CircleAvatar(
-                        radius: 30,
-                        backgroundImage: AssetImage('assets/images/splash.jpg'),
-                      ),
-                      title: Text(
-                        'Music  $index',
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      trailing: GestureDetector(
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      // FavSongs favrsongs = allfavSongs[index];
+                      return ListTile(
                         onTap: () {
-                          removeFavorite(context);
-                          // showModalBottomSheet(
-                          //   context: context,
-                          //   builder: (context) {
-                          //     return Container(
-                          //       width: width1 * 0.449,
-                          //       height: height1 * 0.10,
-                          //       color: Colors.black,
-                          //       child: Column(
-                          //         mainAxisAlignment: MainAxisAlignment.center,
-                          //         children: [
-                          //           GestureDetector(
-                          //             onTap: () {
-                          //               Navigator.pop(context);
-                          //               removeFavorite(context);
-                          //             },
-                          //             child: const Text(
-                          //               'Remove From Playlist',
-                          //               style: TextStyle(
-                          //                 color: Colors.white,
-                          //                 fontSize: 20,
-                          //               ),
-                          //             ),
-                          //           ),
-                          //           const SizedBox(
-                          //             height: 25,
-                          //           ),
-                          //         ],
-                          //       ),
-                          //     );
-                          //   },
-                          // );
+                          player.open(
+                              Playlist(
+                                audios: fsongs,
+                                startIndex: index,
+                              ),
+                              showNotification: true,
+                              loopMode: LoopMode.playlist,
+                              headPhoneStrategy:
+                                  HeadPhoneStrategy.pauseOnUnplug);
+                          setState(() {});
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return MusicPlayScreen(
+                                  index: index,
+                                );
+                              },
+                            ),
+                          );
                         },
-                        child: const Icon(
-                          Icons.delete,
-                          color: Colors.white,
-
-                          // color: Color(Colors.white),
+                        leading: QueryArtworkWidget(
+                          artworkFit: BoxFit.cover,
+                          id: allDbSongs[index].id!,
+                          type: ArtworkType.AUDIO,
+                          artworkQuality: FilterQuality.high,
+                          size: 2000,
+                          quality: 100,
+                          artworkBorder: BorderRadius.circular(50),
+                          nullArtworkWidget: ClipRRect(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(50)),
+                            child: Image.asset(
+                              'assets/images/studio.png',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return const Divider();
-                  },
-                  itemCount: 15),
+                        title: SingleChildScrollView(
+                          child: Text(
+                            allDbSongs[index].songname!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.montserrat(
+                              textStyle: const TextStyle(
+                                  fontSize: 13.43,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ),
+                        trailing: GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text("Remove from favorites"),
+                                  content: const Text("Are You Sure ?"),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text("Cancel")),
+                                    TextButton(
+                                        onPressed: () {
+                                          fsongs.removeAt(index);
+
+                                          // deleteSongFromList(favrsongs, index);
+                                          favsongbox.deleteAt(index);
+                                          log(player.playlist!.audios
+                                              .toString());
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text("Remove"))
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: const Icon(
+                            Icons.delete,
+                            color: Colors.white,
+
+                            // color: Color(Colors.white)
+                          ),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const Divider();
+                    },
+                    itemCount: allDbSongs.length);
               },
-              child: 
             ),
           )
         ],
@@ -182,5 +225,14 @@ class _FavoritePagelistState extends State<FavoritePagelist> {
       ),
     );
   }
+
+  // deleteSongFromList(FavSongs values, int index) async {
+  //   List<FavSongs> list = favsongbox.values.toList();
+  //   bool isAlready =
+  //       list.where((element) => element.id == values.id).isNotEmpty;
+  //   if (isAlready == true) {
+  //     favsongbox.deleteAt(index);
+  //   }
+  // }
 }
 //how to set bottom navigation bar in flutter?

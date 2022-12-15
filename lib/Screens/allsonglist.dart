@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:miomix/Models/dbfunction.dart';
 import 'package:miomix/Models/favourite.dart';
+import 'package:miomix/Playlists/allbottomfav.dart';
 import 'package:miomix/Screens/playscreen.dart';
 import 'package:miomix/favourites/favadd.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -88,7 +89,7 @@ class _AllSongListState extends State<AllSongList> {
               Songs songs = alls[index];
               MostPlayed MPsongs = mostoftimeplayed[index];
               RecentPlayed rsongs;
-              FavSongs fsongs;
+              //FavSongs fsongs;
 
               return Padding(
                 padding: const EdgeInsets.fromLTRB(0, 6, 0, 3),
@@ -113,7 +114,9 @@ class _AllSongListState extends State<AllSongList> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: ((context) => MusicPlayScreen()),
+                        builder: ((context) => MusicPlayScreen(
+                              index: index,
+                            )),
                       ),
                     );
                   }),
@@ -151,6 +154,7 @@ class _AllSongListState extends State<AllSongList> {
                   //----------------------------------------Trailing Menu Pop UP--------------------------------------------------
                   trailing: IconButton(
                     onPressed: (() {
+                      setState(() {});
                       showModalBottomSheet(
                         backgroundColor: Colors.black,
                         shape: const RoundedRectangleBorder(
@@ -167,26 +171,11 @@ class _AllSongListState extends State<AllSongList> {
                                 SizedBox(
                                   height: height1 * 0.05,
                                 ),
-                                const Text(
-                                  'Add To Playlist',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                  ),
-                                ),
+                                AddtoPlaylist1(songIndex: index),
                                 SizedBox(
                                   height: height1 * 0.011,
                                 ),
-
                                 AddtoFavourite(index: index),
-
-                                // child: const Text(
-                                //   'Add to Favourites',
-                                //   style: TextStyle(
-                                //     color: Colors.white,
-                                //     fontSize: 18,
-                                //   ),
-                                // ),
                               ],
                             ),
                           );

@@ -1,10 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:miomix/Models/allsonglist.dart';
 import 'package:miomix/Playlists/playlistscreen.dart';
-import 'package:miomix/Screens/mainscreen.dart';
 import 'package:miomix/favourites/favoritelist.dart';
+import '../Models/dbfunction.dart';
+import '../Models/playlistmpdel.dart';
 
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
@@ -14,6 +17,11 @@ class LibraryScreen extends StatefulWidget {
 }
 
 class _LibraryScreenState extends State<LibraryScreen> {
+  TextEditingController _textEditingController = TextEditingController();
+  final formGlobalKey = GlobalKey<FormState>();
+  TextEditingController controller = TextEditingController();
+  final formGlobalKey1 = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     final height1 = MediaQuery.of(context).size.height;
@@ -21,7 +29,14 @@ class _LibraryScreenState extends State<LibraryScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          createPlaylist(context);
+          showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            builder: (context) {
+              return bottomSheet(context);
+            },
+          );
+          //createPlaylist(context);
           // showModalBottomSheet(
           //   context: context,
           //   builder: (context) => bottomSheet(context),
@@ -74,7 +89,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        return FavoritePagelist();
+                        return const FavoritePagelist();
                       },
                     ),
                   );
@@ -158,114 +173,143 @@ class _LibraryScreenState extends State<LibraryScreen> {
               height: 10,
             ),
             Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(left: width1 * 0.05),
-                child: ListView.separated(
-                    // scrollDirection: Axis.vertical,
-                    // physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return const Playlistscreen();
-                                      },
+              child: ValueListenableBuilder(
+                valueListenable: playlistbox.listenable(),
+                builder: (context, Box<PlaylistSongs> data, child) {
+                  List<PlaylistSongs> allplay = data.values.toList();
+
+                  if (playlistbox.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Align(
+                        heightFactor: 7.5,
+                        child: Center(
+                          child: Text(
+                            "No Playlist Created",
+                            style: GoogleFonts.montserrat(
+                                textStyle:
+                                    const TextStyle(color: Colors.white)),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  return ListView.separated(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Playlistscreen(
+                                allPlaylistSongs:
+                                    allplay[index].playlistssongs!,
+                                playlistindex: index,
+                                playlistname: allplay[index].playlistname!,
+                              ),
+                            ),
+                          ),
+                          // return Navigator.of(context).pop(MaterialPageRoute(
+                          //   builder: (context) {
+                          //     return Playlistscreen(
+                          //       allPlaylistSongs: allplay[index]
+                          //           .playlistssongs!, //here we passing the song that is contain in our songs list and specify the index
+                          //       playlistindex: index,
+                          //       playlistname: allplay[index].playlistname!,
+                          //     );
+                          //   },
+                          // ));
+
+                          leading: Container(
+                            height: height1 * 0.15,
+                            width: width1 * 0.17,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              image: const DecorationImage(
+                                image: AssetImage('assets/images/studio.png'),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                          title: Text(
+                            allplay[index].playlistname.toString(),
+                            style: GoogleFonts.montserrat(
+                              textStyle: const TextStyle(
+                                  fontSize: 13.43,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          trailing: IconButton(
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (context) {
+                                  return Container(
+                                    width: width1 * 0.449,
+                                    height: height1 * 0.20,
+                                    color: Colors.black,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            playlistbox.deleteAt(index);
+                                            deleteListSnackbar(context);
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text(
+                                            'Delete Playlist',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 25,
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            List<Songs>? exisitingSongs =
+                                                allplay[index].playlistssongs!;
+                                            showModalBottomSheet(
+                                              isScrollControlled: true,
+                                              context: context,
+                                              builder: (context) {
+                                                return bottomSheetedit(
+                                                    context,
+                                                    index,
+                                                    allplay[index]
+                                                        .playlistname!,
+                                                    exisitingSongs);
+                                              },
+                                            );
+                                          },
+                                          child: const Text(
+                                            'Rename playlist',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   );
                                 },
-                                child: Container(
-                                  height: height1 * 0.15,
-                                  width: width1 * 0.25,
-                                  decoration: const BoxDecoration(
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        'https://media.istockphoto.com/id/685111998/photo/young-girl-dancing-to-the-music.jpg?b=1&s=612x612&w=0&k=20&c=hzH3S5_9l_P-ZfpGwyz5OQp1QsSfEJor48jObUfUnBU=',
-                                      ),
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(14.0),
-                                child: Text(
-                                  'Playlist $index',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: width1 * 0.3),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      builder: (context) {
-                                        return Container(
-                                          width: width1 * 0.449,
-                                          height: height1 * 0.20,
-                                          color: Colors.black,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  deleteListSnackbar(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text(
-                                                  'Delete Playlist',
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20),
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 25,
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Navigator.pop(context);
-                                                  renamePlaylist();
-                                                },
-                                                child: const Text(
-                                                  'Rename Playlist',
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: const Icon(
-                                    Icons.more_vert_outlined,
-                                    color: Colors.white,
-                                    // color: Color(Colors.white),
-                                  ),
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return const Divider();
-                    },
-                    itemCount: 10),
+                              );
+                            },
+                            icon: const Icon(Icons.more_vert_sharp),
+                            color: Colors.white,
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return const Divider();
+                      },
+                      itemCount: allplay.length);
+                },
               ),
             ),
             // <----------------------------------------------------------------- Playlists---------------------------------------------------------------------------------------------------------------------->
@@ -288,52 +332,42 @@ class _LibraryScreenState extends State<LibraryScreen> {
   }
   // <------------------------------------------------Delete Snackbar------------------------------------------------------------------------------------------------------------------------------------------>
 
-  // bottomSheetedit(context) {
-  // Widget bottomSheet(BuildContext context) {
-  //   return SingleChildScrollView(
-  //     child: Padding(
-  //       padding:
-  //           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-  //       child: Container(
-  //         height: 423 * 0.7,
-  //         color: const Color.fromARGB(255, 24, 24, 24),
-  //         child: Column(
-  //           children: [createPlaylist(context)],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+  Widget bottomSheet(BuildContext context) {
+    return Padding(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Container(
+        height: 250,
+        color: const Color.fromARGB(255, 24, 24, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [playlistform(context)],
+        ),
+      ),
+    );
+  }
 
-  createPlaylist(context) {
-    final height1 = MediaQuery.of(context).size.height;
-    final width1 = MediaQuery.of(context).size.width;
-    return showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          width: width1 * 0.449,
-          height: height1 * 0.50,
-          color: Colors.black,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Padding(
-                  padding: EdgeInsets.only(top: height1 * 0.01),
-                  child: const Text(
-                    'Create Playlist',
-                    style: TextStyle(
+  Padding playlistform(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: InkWell(
+        child: Column(
+          children: [
+            Text(
+              "Create Playlist ",
+              style: GoogleFonts.montserrat(
+                  textStyle: const TextStyle(
                       color: Colors.white,
-                      fontSize: 25,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              TextFormField(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500)),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Form(
+              key: formGlobalKey,
+              child: TextFormField(
+                controller: _textEditingController,
                 cursorHeight: 25,
                 decoration: InputDecoration(
                   filled: true,
@@ -346,15 +380,36 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       textStyle: const TextStyle(
                           color: Color.fromARGB(255, 69, 69, 69))),
                 ),
+                validator: (value) {
+                  List<PlaylistSongs> values = playlistbox.values.toList();
+
+                  bool isAlreadyAdded = values
+                      .where((element) => element.playlistname == value!.trim())
+                      .isNotEmpty;
+
+                  if (value!.trim() == '') {
+                    return 'Name required';
+                  }
+                  if (value.trim().length > 10) {
+                    return 'Enter Characters below 10 ';
+                  }
+
+                  if (isAlreadyAdded) {
+                    return 'Name Already Exists';
+                  }
+                  return null;
+                },
               ),
-              formButtons(context)
-            ],
-          ),
-        );
-      },
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            formButtons(context)
+          ],
+        ),
+      ),
     );
   }
-  // <--------------------------------------------------------------------------Playlist creation-------------------------------------------------------------------------------------------------------------------------------------------------->
 
   Row formButtons(BuildContext context) {
     return Row(
@@ -364,8 +419,19 @@ class _LibraryScreenState extends State<LibraryScreen> {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text("cancel")),
-        ElevatedButton(onPressed: () {}, child: const Text("Create"))
+            child: const Text("Cancel")),
+        ElevatedButton(
+          onPressed: () {
+            final isValid = formGlobalKey.currentState!.validate();
+            if (isValid) {
+              playlistbox.add(PlaylistSongs(
+                  playlistname: _textEditingController.text,
+                  playlistssongs: []));
+              Navigator.pop(context);
+            }
+          },
+          child: const Text("Create"),
+        )
       ],
     );
   }
@@ -420,5 +486,117 @@ class _LibraryScreenState extends State<LibraryScreen> {
       },
     );
   }
+
+  bottomSheetedit(
+      BuildContext context, int index, String name, List<Songs> exisongs) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          height: 423 * 0.7,
+          color: const Color.fromARGB(255, 24, 24, 24),
+          child: Column(
+            children: [editBottom(context, index, name, exisongs)],
+          ),
+        ),
+      ),
+    );
+  }
+
+  editBottom(
+      BuildContext context, int index, String name, List<Songs> exisongs) {
+    //double width = MediaQuery.of(context).size.width;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        child: Column(
+          children: [
+            Text(
+              "Edit Playlist ",
+              style: GoogleFonts.montserrat(
+                  textStyle: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500)),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Form(
+              key: formGlobalKey1,
+              child: TextFormField(
+                controller: controller,
+                cursorHeight: 25,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: const Color.fromARGB(199, 255, 255, 255),
+                  border: const OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(255, 0, 0, 0))),
+                  hintText: "Enter a name",
+                  hintStyle: GoogleFonts.montserrat(
+                      textStyle: const TextStyle(
+                          color: Color.fromARGB(255, 69, 69, 69))),
+                ),
+                validator: (value) {
+                  List<PlaylistSongs> values = playlistbox.values.toList();
+
+                  bool isAlreadyAdded = values
+                      .where((element) => element.playlistname == value!.trim())
+                      .isNotEmpty;
+                  if (value!.trim() == '') {
+                    return 'Name Required';
+                  }
+                  if (value.trim().length > 10) {
+                    return 'Enter Characters below 10 ';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            formButtonsedit(context, index, name, exisongs)
+          ],
+        ),
+      ),
+    );
+  }
+
+  Row formButtonsedit(
+      BuildContext context, int index, String name, List<Songs> exisongs) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("cancel")),
+        ElevatedButton(
+            onPressed: () {
+              final isValid = formGlobalKey1.currentState!.validate();
+              if (isValid) {
+                playlistbox.putAt(
+                    index,
+                    PlaylistSongs(
+                        playlistname: controller.text,
+                        playlistssongs: exisongs));
+                Navigator.pop(context);
+              }
+            },
+            child: const Text("Create"))
+      ],
+    );
+  }
   // <----------------------------------------------------------------------Rename Playlist------------------------------------------------------------------------------------------------------------------------------------------------------>
 }
+
+//how to set border in container in flutter?
+
+
+
+
+

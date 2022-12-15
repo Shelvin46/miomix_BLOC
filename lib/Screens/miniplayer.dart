@@ -28,7 +28,9 @@ class _MiniPlayerState extends State<MiniPlayer> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: ((context) => const MusicPlayScreen()),
+                  builder: ((context) => MusicPlayScreen(
+                        index: playing.index,
+                      )),
                 ),
               );
             }),
