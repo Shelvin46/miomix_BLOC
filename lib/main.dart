@@ -6,6 +6,7 @@ import 'package:miomix/Models/mostlyplayed.dart';
 import 'package:miomix/Models/recentlyplayed.dart';
 import 'package:miomix/Screens/splashscreen.dart';
 import 'Models/allsonglist.dart';
+import 'Models/nickname.dart';
 import 'Models/playlistmpdel.dart';
 
 Future<void> main() async {
@@ -22,6 +23,8 @@ Future<void> main() async {
 
   Hive.registerAdapter(MostPlayedAdapter());
   openMostlyPlayedDb();
+  Hive.registerAdapter(nickNameAdapter());
+  openname();
 
   Hive.registerAdapter(FavSongsAdapter());
   openFavouritePlayedDb();
