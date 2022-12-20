@@ -15,7 +15,7 @@ class AddFavNowScreen extends StatefulWidget {
 }
 
 class _AddFavNowScreenState extends State<AddFavNowScreen> {
-  List<FavSongs> fsongs = [];
+  List<FavSongs> fasongs = [];
   final box = Songbox.getInstance();
   late List<Songs> dbsongs;
   @override
@@ -26,8 +26,8 @@ class _AddFavNowScreenState extends State<AddFavNowScreen> {
 
   @override
   Widget build(BuildContext context) {
-    fsongs = favsongbox.values.toList();
-    return fsongs
+    fasongs = favsongbox.values.toList();
+    return fasongs
             .where(
                 (element) => element.songname == dbsongs[widget.index].songname)
             //here we checking the index song is equal to favourite song list
@@ -57,13 +57,12 @@ class _AddFavNowScreenState extends State<AddFavNowScreen> {
           )
         : IconButton(
             onPressed: () {
-              int currentIndex = fsongs.indexWhere(
+              int currentIndex = fasongs.indexWhere(
                   (element) => element.id == dbsongs[widget.index].id);
               player.playlist!.audios.removeAt(currentIndex);
-              log(currentIndex.toString());
               favsongbox.deleteAt(currentIndex);
+              log(currentIndex.toString());
               setState(() {});
-              // Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Removed From Favorites")));
             },

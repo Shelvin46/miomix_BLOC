@@ -27,23 +27,25 @@ class _FavHomeListState extends State<FavHomeList> {
   // List<FavSongs> fasongs = [];
   @override
   void initState() {
-    List<FavSongs> favousongs = favsongbox.values.toList();
-    for (var item in favousongs) {
-      favosongs.add(Audio.file(item.songurl.toString(),
-          metas: Metas(
-            artist: item.artist,
-            title: item.songname,
-            id: item.id.toString(),
-          )));
-    }
-    //favosongs = convertAudio();
-    log(favosongs.toString());
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      favosongs.clear();
+      List<FavSongs> favousongs = favsongbox.values.toList();
+      for (var item in favousongs) {
+        favosongs.add(Audio.file(item.songurl.toString(),
+            metas: Metas(
+              artist: item.artist,
+              title: item.songname,
+              id: item.id.toString(),
+            )));
+      }
+      //favosongs = convertAudio();
+      log(favosongs.toString());
+    });
     //setState(() {});
     final height1 = MediaQuery.of(context).size.height;
     final width1 = MediaQuery.of(context).size.width;

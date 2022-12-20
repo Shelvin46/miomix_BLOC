@@ -4,6 +4,8 @@ import 'package:miomix/Models/mostlyplayed.dart';
 import 'package:miomix/Models/playlistmpdel.dart';
 import 'package:miomix/Models/recentlyplayed.dart';
 
+import 'nickname.dart';
+
 late Box<RecentPlayed> recentlyplayedbox;
 openrecentlyplayedDb() async {
   recentlyplayedbox = await Hive.openBox('recentlyplayed');
@@ -17,6 +19,12 @@ openMostlyPlayedDb() async {
 late Box<FavSongs> favsongbox;
 openFavouritePlayedDb() async {
   favsongbox = await Hive.openBox('Favouritesongs');
+}
+
+late Box<nickName> nameBox;
+openname() async {
+  nameBox = await Hive.openBox<nickName>('name');
+  nameBox.add(nickName(name: "User"));
 }
 
 late Box<PlaylistSongs> playlistbox;

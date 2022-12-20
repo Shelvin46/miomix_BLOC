@@ -1,10 +1,5 @@
-import 'dart:developer';
-
-import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:miomix/Models/dbfunction.dart';
-import 'package:miomix/favourites/favhome.dart';
-
 import '../Models/allsonglist.dart';
 import '../Models/favourite.dart';
 
@@ -45,8 +40,6 @@ class _AddtoFavouriteState extends State<AddtoFavourite> {
                     songurl: dbsongs[widget.index].songurl,
                     id: dbsongs[widget.index].id),
               );
-              // favosongs = convertAudio();
-              //convertAudio();
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Added to Favorites")));
@@ -68,16 +61,3 @@ class _AddtoFavouriteState extends State<AddtoFavourite> {
             child: const Text("Remove From Favourites"));
   }
 }
-
-
-// convertAudio() {
-//   for (var item in favousongs) {
-//     favosongs.add(Audio.file(item.songurl.toString(),
-//         metas: Metas(
-//           artist: item.artist,
-//           title: item.songname,
-//           id: item.id.toString(),
-//         )));
-//   }
-//   return favosongs;
-// }
