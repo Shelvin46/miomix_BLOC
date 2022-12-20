@@ -272,6 +272,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  flutter_markdown:
+    dependency: "direct main"
+    description:
+      name: flutter_markdown
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.13"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -408,6 +415,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  markdown:
+    dependency: transitive
+    description:
+      name: markdown
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.1"
   marquee:
     dependency: "direct main"
     description:
@@ -644,6 +658,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.1"
+  switcher_button:
+    dependency: "direct main"
+    description:
+      name: switcher_button
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.4"
   term_glyph:
     dependency: transitive
     description:

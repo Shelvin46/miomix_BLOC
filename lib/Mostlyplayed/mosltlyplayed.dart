@@ -10,7 +10,6 @@ import '../Models/mostlyplayed.dart';
 
 class MosltlyPlayedScreen extends StatefulWidget {
   const MosltlyPlayedScreen({super.key});
-
   @override
   State<MosltlyPlayedScreen> createState() => _MosltlyPlayedScreenState();
 }
@@ -22,7 +21,7 @@ class _MosltlyPlayedScreenState extends State<MosltlyPlayedScreen> {
   AssetsAudioPlayer player = AssetsAudioPlayer.withId("0");
   @override
   void initState() {
-    print(finalmsongs);
+    //print(finalmsongs);
     List<MostPlayed> songlist =
         mostlyplayedbox.values.toList().reversed.toList();
     log(songlist.toString());

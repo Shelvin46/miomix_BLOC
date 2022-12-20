@@ -3,23 +3,16 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:marquee/marquee.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:miomix/Models/allsonglist.dart';
 import 'package:miomix/Models/dbfunction.dart';
-import 'package:miomix/Models/mostlyplayed.dart';
-import 'package:miomix/Models/recentlyplayed.dart';
 import 'package:miomix/Mostlyplayed/mosltlyplayed.dart';
 import 'package:miomix/Recentlyplayed/recentlyplayed.dart';
 import 'package:miomix/Screens/allsonglist.dart';
 import 'package:miomix/Screens/miniplayer.dart';
-import 'package:miomix/Screens/playscreen.dart';
-import 'package:miomix/Screens/splashscreen.dart';
 import 'package:miomix/Settingscreen/settingscreen.dart';
 import 'package:miomix/favourites/favhome.dart';
-import 'package:on_audio_query/on_audio_query.dart';
-
-// import 'package:audioplayers/audio_cache.dart';
+import '../Models/nickname.dart';
 
 class ListScreen extends StatefulWidget {
   const ListScreen({super.key});
@@ -29,6 +22,7 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
+  late List<nickName> userName;
   late bool playerVisibility;
   final box = Songbox.getInstance(); //contains copy of all songs
   List<Audio> convertAudios =
@@ -64,191 +58,196 @@ class _ListScreenState extends State<ListScreen> {
     final height1 = MediaQuery.of(context).size.height;
     final width1 = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      bottomSheet: const MiniPlayer(),
-      // bottomSheet: miniPlayer(),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50.0),
-        child: AppBar(
-          title: const Padding(
-            padding: EdgeInsets.only(bottom: 2),
-            child: Text('Good Morning Shelvin !!'),
-          ),
-          backgroundColor: const Color.fromARGB(255, 4, 45, 79),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const SetttingScreen();
-                      },
-                    ),
-                  );
-                },
-                child: const Icon(
-                  Icons.settings,
-                ),
-              ),
-            ),
-          ],
-          // shape: const RoundedRectangleBorder(),
-        ),
-      ),
-      // <-------------------------------------------------------------App bar--------------------------------------------------------------------------------------------------------->
-      body: Container(
-        // height: height * .096,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/splash.jpg"),
-            fit: BoxFit.cover,
-          ),
-        ),
-        //<-----------------------------------------------------------Background image----------------------------------------------------------------------------------------------------------------------->
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    height: 20,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(
-                          width1 * 0.0100, 0, 0, height1 * 0.00010),
-                      child: const Text(
-                        '     Your Dashboard',
-                        style: TextStyle(
-                          fontSize: 22,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return const MosltlyPlayedScreen();
-                          },
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: width1 * 0.449,
-                      height: height1 * 0.10,
-
-                      // ignore: sort_child_properties_last
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                            width1 * 0.0100, 0, 0, height1 * 0.0100),
-                        child: const Center(
-                          child: Text(
-                            'Mostly Played',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 19,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 28, 97, 150),
-                          borderRadius: BorderRadius.circular(15)
-                          // image: DecorationImage(
-                          //   image: AssetImage('assets/images/splash.jpg'),
-                          //   fit: BoxFit.fill,
-                          // ),
-                          ),
-                    ),
-                  ),
-                  GestureDetector(
+    return ValueListenableBuilder(
+      valueListenable: nameBox.listenable(),
+      builder: (context, value, child) {
+        userName = value.values.toList();
+        return Scaffold(
+          bottomSheet: const MiniPlayer(),
+          // bottomSheet: miniPlayer(),
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(50.0),
+            child: AppBar(
+              title: Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Text(welcomeUser())),
+              backgroundColor: const Color.fromARGB(255, 4, 45, 79),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return const RecentlyPlayedScreen();
+                            return const SetttingScreen();
                           },
                         ),
                       );
                     },
-                    child: Container(
-                      width: width1 * 0.449,
-                      height: height1 * 0.10,
-                      // ignore: sort_child_properties_last
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                            width1 * 0.0100, 0, 0, height1 * 0.0100),
-                        child: const Center(
-                          child: Text(
-                            'Recently Played',
+                    child: const Icon(
+                      Icons.settings,
+                    ),
+                  ),
+                ),
+              ],
+              // shape: const RoundedRectangleBorder(),
+            ),
+          ),
+          // <-------------------------------------------------------------App bar--------------------------------------------------------------------------------------------------------->
+          body: Container(
+            // height: height * .096,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/splash.jpg"),
+                fit: BoxFit.cover,
+              ),
+            ),
+            //<-----------------------------------------------------------Background image----------------------------------------------------------------------------------------------------------------------->
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              width1 * 0.0100, 0, 0, height1 * 0.00010),
+                          child: const Text(
+                            '     Your Dashboard',
                             style: TextStyle(
+                              fontSize: 22,
                               color: Colors.white,
-                              fontSize: 19,
                             ),
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return const MosltlyPlayedScreen();
+                              },
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: width1 * 0.449,
+                          height: height1 * 0.10,
 
-                      decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 28, 97, 150),
-                          borderRadius: BorderRadius.circular(15)
-                          // image: DecorationImage(
-                          //   image: AssetImage('assets/images/splash.jpg'),
-                          //   fit: BoxFit.fill,
-                          // ),
+                          // ignore: sort_child_properties_last
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(
+                                width1 * 0.0100, 0, 0, height1 * 0.0100),
+                            child: const Center(
+                              child: Text(
+                                'Mostly Played',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 19,
+                                ),
+                              ),
+                            ),
                           ),
-                    ),
-                  ),
-                ],
-              ),
-              //<----------------------------------------------------------------Mostly Played & Recently Played------------------------------------------------------------------------------------------>
-              const SizedBox(
-                height: 20,
-              ),
-              FavHomeList(),
 
-              Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        width1 * 0.0100, 0, 0, height1 * 0.00010),
-                    child: const Text(
-                      '     Your Songs',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
+                          decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 28, 97, 150),
+                              borderRadius: BorderRadius.circular(15)
+                              // image: DecorationImage(
+                              //   image: AssetImage('assets/images/splash.jpg'),
+                              //   fit: BoxFit.fill,
+                              // ),
+                              ),
+                        ),
                       ),
-                    ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return const RecentlyPlayedScreen();
+                              },
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: width1 * 0.449,
+                          height: height1 * 0.10,
+                          // ignore: sort_child_properties_last
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(
+                                width1 * 0.0100, 0, 0, height1 * 0.0100),
+                            child: const Center(
+                              child: Text(
+                                'Recently Played',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 19,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 28, 97, 150),
+                              borderRadius: BorderRadius.circular(15)
+                              // image: DecorationImage(
+                              //   image: AssetImage('assets/images/splash.jpg'),
+                              //   fit: BoxFit.fill,
+                              // ),
+                              ),
+                        ),
+                      ),
+                    ],
                   ),
+                  //<----------------------------------------------------------------Mostly Played & Recently Played------------------------------------------------------------------------------------------>
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const FavHomeList(),
+
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            width1 * 0.0100, 0, 0, height1 * 0.00010),
+                        child: const Text(
+                          '     Your Songs',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const AllSongList(),
+                  // listView(),
+                  //miniPlayer()
+                  const SizedBox(height: 100),
                 ],
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              const AllSongList(),
-              // listView(),
-              //miniPlayer()
-              const SizedBox(height: 100),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -303,148 +302,6 @@ class _ListScreenState extends State<ListScreen> {
     );
   }
   //<-------------------------------------------------------------------------Favorite songs---------------------------------------------------------------------------------------------------------------------->
-
-  // listView() {
-  //   final height1 = MediaQuery.of(context).size.height;
-  //   final width1 = MediaQuery.of(context).size.width;
-  //   return ValueListenableBuilder(
-  //       valueListenable: Songbox.getInstance().listenable(),
-  //       builder: (context, Box<Songs> data, child) {
-  //         List<Songs> alls = data.values.toList();
-  //         //here  assign all the songs
-  //         List<MostPlayed> mostoftimeplayed = mostlyplayedbox.values.toList();
-
-  //         if (alls.isEmpty) {
-  //           return const CircularProgressIndicator();
-  //         }
-  //         return ListView.separated(
-  //             physics: const NeverScrollableScrollPhysics(),
-  //             shrinkWrap: true,
-  //             scrollDirection: Axis.vertical,
-  //             itemBuilder: (context, index) {
-  //               Songs songs = alls[
-  //                   index]; // assigning the each song index into a variable.
-  //               MostPlayed msongs = mostoftimeplayed[index];
-  //               RecentPlayed rsongs;
-  //               return ListTile(
-  //                 onTap: (() {
-  //                   // msongs = MostPlayed(
-  //                   //     // here rsong variable containing song with song name and all requireed parameter.
-  //                   //     songname: songs.songname,
-  //                   //     artist: songs.artist,
-  //                   //     id: songs.id,
-  //                   //     duration: songs.duration,
-  //                   //     songurl: songs.songurl
-  //                   //     count: songs.count,);
-  //                   rsongs = RecentPlayed(
-  //                       // here rsong variable containing song with song name and all requireed parameter.
-  //                       songname: songs.songname,
-  //                       artist: songs.artist,
-  //                       id: songs.id,
-  //                       duration: songs.duration,
-  //                       songurl: songs.songurl);
-  //                   updateRecentlyPlayed(rsongs, index);
-  //                   updateMostlyPlayed(msongs, index);
-  //                   // updateMostlyPlayed(msongs, index);
-
-  //                   audioPlayer.open(
-  //                     // here open the song for playing it contain all audios and start with corresponding index
-  //                     Playlist(
-  //                       audios: convertAudios,
-  //                       startIndex: index,
-  //                     ),
-  //                     headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
-  //                     loopMode: LoopMode.playlist,
-  //                   );
-  //                   Navigator.of(context).push(MaterialPageRoute(
-  //                     builder: (context) {
-  //                       return const MusicPlayScreen();
-  //                     },
-  //                   ));
-  //                 }),
-  //                 leading: QueryArtworkWidget(
-  //                   id: songs.id!,
-  //                   type: ArtworkType.AUDIO,
-  //                   artworkQuality: FilterQuality.high,
-  //                   size: 2000,
-  //                   quality: 100,
-  //                   artworkFit: BoxFit.cover,
-  //                   artworkBorder: BorderRadius.circular(50),
-  //                   nullArtworkWidget: const CircleAvatar(
-  //                     radius: 30,
-  //                     backgroundImage: AssetImage('assets/images/studio.png'),
-  //                   ),
-  //                 ),
-  //                 title: Text(
-  //                   songs.songname!,
-  //                   maxLines: 1,
-  //                   overflow: TextOverflow.ellipsis,
-  //                   style: const TextStyle(
-  //                     color: Colors.white,
-  //                   ),
-  //                 ),
-  //                 trailing: GestureDetector(
-  //                   onTap: () {
-  //                     showModalBottomSheet(
-  //                       context: context,
-  //                       builder: (context) {
-  //                         return Container(
-  //                           width: width1 * 0.449,
-  //                           height: height1 * 0.20,
-  //                           color: Colors.black,
-  //                           child: Column(
-  //                             mainAxisAlignment: MainAxisAlignment.center,
-  //                             children: [
-  //                               GestureDetector(
-  //                                 onTap: () {
-  //                                   Navigator.pop(context);
-  //                                   addtoPlaylist();
-  //                                 },
-  //                                 child: const Text(
-  //                                   'Add to Playlist',
-  //                                   style: TextStyle(
-  //                                     color: Colors.white,
-  //                                     fontSize: 20,
-  //                                   ),
-  //                                 ),
-  //                               ),
-  //                               const SizedBox(
-  //                                 height: 25,
-  //                               ),
-  //                               GestureDetector(
-  //                                 onTap: () {
-  //                                   favouriteAdd();
-  //                                   Navigator.pop(context);
-  //                                 },
-  //                                 child: const Text(
-  //                                   'Add to Favorites',
-  //                                   style: TextStyle(
-  //                                     color: Colors.white,
-  //                                     fontSize: 20,
-  //                                   ),
-  //                                 ),
-  //                               ),
-  //                             ],
-  //                           ),
-  //                         );
-  //                       },
-  //                     );
-  //                   },
-  //                   child: const Icon(
-  //                     Icons.more_vert_outlined,
-  //                     color: Colors.white,
-
-  //                     // color: Color(Colors.white),
-  //                   ),
-  //                 ),
-  //               );
-  //             },
-  //             separatorBuilder: (context, index) {
-  //               return const Divider();
-  //             },
-  //             itemCount: alls.length);
-  //       });
-  // }
 
   //<------------------------------------------------------------------------Listing Songs-------------------------------------------------------------------------------------------------------------------->
 
@@ -533,5 +390,26 @@ class _ListScreenState extends State<ListScreen> {
       ),
     );
   }
+
+  String welcomeUser() {
+    var hour = DateTime.now().hour;
+    String name = userName[0].name!;
+
+    if (hour < 12) {
+      return 'Good Morning $name !';
+    }
+    if (hour < 16) {
+      return 'Good Afternoon $name !';
+    }
+    if (hour < 21) {
+      return 'Good Evening $name !';
+    }
+    if (hour < 4) {
+      return 'Good Night $name !';
+    }
+
+    return 'Good Night $name !';
+  }
 }
+
 //how to apply mediaquery in container?

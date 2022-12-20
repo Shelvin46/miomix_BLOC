@@ -92,9 +92,10 @@ class _AddtoPlaylist1State extends State<AddtoPlaylist1> {
                                             ),
                                             onTap: () {
                                               PlaylistSongs? plsongs =
-                                                  playlistbox.getAt(index);
-                                              List<Songs>? plnewsongs =
-                                                  plsongs!.playlistssongs;
+                                                  playlistbox.getAt(
+                                                      index); //? it retreives the index from playlistbox
+                                              List<Songs>? plnewsongs = plsongs!
+                                                  .playlistssongs; //?here we take the corresponding index from all song list
                                               Box<Songs> box =
                                                   Hive.box('Songs');
                                               List<Songs> dbAllsongs =
@@ -124,7 +125,6 @@ class _AddtoPlaylist1State extends State<AddtoPlaylist1> {
                                                           widget.songIndex]
                                                       .id,
                                                 ));
-
                                                 // playlistbox.putAt(
                                                 //     index,
                                                 //     PlaylistSongs(

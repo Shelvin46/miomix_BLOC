@@ -111,15 +111,6 @@ class _RecentlyPlayedScreenState extends State<RecentlyPlayedScreen> {
                       itemBuilder: ((context, index) {
                         return ListTile(
                           onTap: () {
-                            //    final rsong = RecentPlayed(
-                            // songname: rsongs[index].songname,
-                            // artist: rsongs[index].artist,
-                            // duration: rsongs[index].duration,
-                            // songurl: rsongs[index].songurl,
-                            // id: rsongs[index].id);
-
-                            // updatePlayedSongCount(msongs, index);
-                            //updateRecentPlayed(rsong, index); */
                             player.open(
                               Playlist(
                                 audios: resongconvert,
@@ -169,47 +160,38 @@ class _RecentlyPlayedScreenState extends State<RecentlyPlayedScreen> {
                           ),
                           trailing: IconButton(
                             onPressed: (() {
-                              showModalBottomSheet(
-                                backgroundColor: Colors.black,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(20),
-                                  ),
-                                ),
-                                context: context,
-                                builder: ((context) {
-                                  return SizedBox(
-                                    height: 150 /* height * 0.13 */,
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: height1 * 0.05,
-                                        ),
-                                        const Text(
-                                          'Add To Playlist',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: height1 * 0.011,
-                                        ),
-
-                                        AddtoFavourite(index: index),
-
-                                        // child: const Text(
-                                        //   'Add to Favourites',
-                                        //   style: TextStyle(
-                                        //     color: Colors.white,
-                                        //     fontSize: 18,
-                                        //   ),
-                                        // ),
-                                      ],
-                                    ),
-                                  );
-                                }),
-                              );
+                              // showModalBottomSheet(
+                              //   backgroundColor: Colors.black,
+                              //   shape: const RoundedRectangleBorder(
+                              //     borderRadius: BorderRadius.vertical(
+                              //       top: Radius.circular(20),
+                              //     ),
+                              //   ),
+                              //   context: context,
+                              //   builder: ((context) {
+                              //     return SizedBox(
+                              //       height: 150 /* height * 0.13 */,
+                              //       child: Column(
+                              //         children: [
+                              //           SizedBox(
+                              //             height: height1 * 0.05,
+                              //           ),
+                              //           const Text(
+                              //             'Add To Playlist',
+                              //             style: TextStyle(
+                              //               color: Colors.white,
+                              //               fontSize: 18,
+                              //             ),
+                              //           ),
+                              //           SizedBox(
+                              //             height: height1 * 0.011,
+                              //           ),
+                              //           AddtoFavourite(index: index),
+                              //         ],
+                              //       ),
+                              //     );
+                              //   }),
+                              // );
                             }),
                             icon: const Icon(
                               Icons.more_vert,

@@ -21,6 +21,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
   final formGlobalKey = GlobalKey<FormState>();
   TextEditingController controller = TextEditingController();
   final formGlobalKey1 = GlobalKey<FormState>();
+  List<PlaylistSongs> playlist = [];
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +176,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
             Expanded(
               child: ValueListenableBuilder(
                 valueListenable: playlistbox.listenable(),
-                builder: (context, Box<PlaylistSongs> data, child) {
+                builder: (context, data, child) {
                   List<PlaylistSongs> allplay = data.values.toList();
 
                   if (playlistbox.isEmpty) {
@@ -209,17 +210,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
                               ),
                             ),
                           ),
-                          // return Navigator.of(context).pop(MaterialPageRoute(
-                          //   builder: (context) {
-                          //     return Playlistscreen(
-                          //       allPlaylistSongs: allplay[index]
-                          //           .playlistssongs!, //here we passing the song that is contain in our songs list and specify the index
-                          //       playlistindex: index,
-                          //       playlistname: allplay[index].playlistname!,
-                          //     );
-                          //   },
-                          // ));
-
                           leading: Container(
                             height: height1 * 0.15,
                             width: width1 * 0.17,
@@ -255,9 +245,38 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                       children: [
                                         GestureDetector(
                                           onTap: () {
-                                            playlistbox.deleteAt(index);
-                                            deleteListSnackbar(context);
                                             Navigator.pop(context);
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      'Delete Playlist'),
+                                                  content: const Text(
+                                                      'Are You Sure'),
+                                                  actions: [
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          return Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text(
+                                                            'Cancel')),
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          playlistbox
+                                                              .deleteAt(index);
+                                                          deleteListSnackbar(
+                                                              context);
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text(
+                                                            'Delete'))
+                                                  ],
+                                                );
+                                              },
+                                            );
                                           },
                                           child: const Text(
                                             'Delete Playlist',
@@ -437,56 +456,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
   }
   // <------------------------------------------------------------------------ Playlist create & cancel button --------------------------------------------------------------------------------------------------------------------------------------------------->
 
-  renamePlaylist() {
-    final height1 = MediaQuery.of(context).size.height;
-    final width1 = MediaQuery.of(context).size.width;
-    return showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          width: width1 * 0.449,
-          height: height1 * 0.50,
-          color: Colors.black,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Padding(
-                  padding: EdgeInsets.only(top: height1 * 0.01),
-                  child: const Text(
-                    'Rename Playlist',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 25,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                cursorHeight: 25,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color.fromARGB(199, 255, 255, 255),
-                  border: const OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Color.fromARGB(255, 0, 0, 0))),
-                  hintText: "Enter a name",
-                  hintStyle: GoogleFonts.montserrat(
-                      textStyle: const TextStyle(
-                          color: Color.fromARGB(255, 69, 69, 69))),
-                ),
-              ),
-              formButtons(context)
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   bottomSheetedit(
       BuildContext context, int index, String name, List<Songs> exisongs) {
     return SingleChildScrollView(
@@ -506,6 +475,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
   editBottom(
       BuildContext context, int index, String name, List<Songs> exisongs) {
+    controller.text = name;
+
+    log(name);
     //double width = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -529,6 +501,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 controller: controller,
                 cursorHeight: 25,
                 decoration: InputDecoration(
+                  //label: Text(name),
                   filled: true,
                   fillColor: const Color.fromARGB(199, 255, 255, 255),
                   border: const OutlineInputBorder(

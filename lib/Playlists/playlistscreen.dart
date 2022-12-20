@@ -1,11 +1,9 @@
 import 'dart:developer';
-
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:miomix/Models/dbfunction.dart';
-import 'package:miomix/Screens/miniplayer.dart';
 import 'package:miomix/Screens/playscreen.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import '../Models/allsonglist.dart';
@@ -94,11 +92,11 @@ class _PlaylistscreenState extends State<Playlistscreen> {
     return Expanded(
       child: ValueListenableBuilder(
         valueListenable: playlistbox.listenable(),
-        builder: (context, Box<PlaylistSongs> data, child) {
+        builder: (context, data, _) {
           List<PlaylistSongs> plsongs = playlistbox.values.toList();
           List<Songs>? songs = plsongs[widget.playlistindex]
               .playlistssongs; //? here taking which playlist and the songs
-          //log(plsongs.toString());
+          log(plsongs.toString());
           if (songs!.isEmpty) {
             return Align(
               heightFactor: 7.5,

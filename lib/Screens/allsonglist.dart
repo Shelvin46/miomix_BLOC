@@ -65,17 +65,6 @@ class _AllSongListState extends State<AllSongList> {
       builder: (context, Box<Songs> data, child) {
         List<Songs> alls = data.values.toList();
 
-        // MostPlayed msongs;
-        // msongs = MostPlayed(
-        //     songname: msongs.songname,
-        //     songurl: msongs.songurl,
-        //     duration: msongs.duration,
-        //     artist: msongs.artist,
-        //     count: msongs.count,
-        //     id: msongs.id);
-
-        // List<MostPlayed> allmostplayedsongs = mostlyplayedbox.values.toList();
-        //here  assign all the songs
         List<MostPlayed> mostoftimeplayed = mostlyplayedbox.values.toList();
 
         if (alls.isEmpty) {

@@ -45,15 +45,10 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {});
     final height1 = MediaQuery.of(context).size.height;
     final width1 = MediaQuery.of(context).size.width;
     return player.builderCurrent(builder: (context, playing) {
-      // final myAudio =
-      //     find(playing.playlist.audios, playing.audio.assetAudioPath);
-      // final myAudio = find(widget.index., playing.audio.assetAudioPath);
-      // myAudio = find(widget.index, playing.audio.assetAudioPath);
-      // here we need to build the screen what we played from assetaudioplayer
-
       return Scaffold(
           backgroundColor: const Color.fromARGB(255, 23, 63, 97),
           body: Column(children: [
@@ -94,22 +89,12 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 player.builderCurrent(builder: (context, playing) {
+                  //setState(() {});
                   return AddFavNowScreen(
                       index: dbsongs.indexWhere((element) =>
                           element.songname == playing.audio.audio.metas.title));
                 }),
                 AddtoPlaylist2(songIndex: playing.index)
-                // AddFavNowScreen(index: playing.index),
-                // IconButton(
-                //   onPressed: () {
-                //     // playlistAdded(context);
-                //   },
-                //   icon: const Icon(
-                //     Icons.add,
-                //     color: Colors.white,
-                //     size: 35,
-                //   ),
-                // ),
               ],
             ),
             const SizedBox(
