@@ -86,31 +86,36 @@ class _SearchScreenState extends State<SearchScreen> {
 
             Padding(
                 padding: const EdgeInsets.all(15),
-                child: TextFormField(
-                  style: GoogleFonts.montserrat(
-                      textStyle: const TextStyle(
-                          color: Color.fromARGB(255, 255, 255, 255))),
-                  onTap: () {},
-                  controller: searchController,
-                  onChanged: (value) => updateList(value),
-                  decoration: InputDecoration(
-                    focusedBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    border: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    prefixIcon: const Icon(
-                      Icons.search_outlined,
-                      color: Colors.white,
-                    ),
-                    focusColor: Colors.white,
-                    hintText: 'What do you want to listen to?',
-                    hintStyle: GoogleFonts.montserrat(
+                child: GestureDetector(
+                  child: TextFormField(
+                    style: GoogleFonts.montserrat(
                         textStyle: const TextStyle(
-                            color: Color.fromARGB(113, 158, 158, 158))),
-                    filled: true,
-                    fillColor: const Color.fromARGB(146, 50, 50, 50),
+                            color: Color.fromARGB(255, 255, 255, 255))),
+                    onTap: () {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    },
+                    //focusNode: FocusScope.of(context),
+                    controller: searchController,
+                    onChanged: (value) => updateList(value),
+                    decoration: InputDecoration(
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      border: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.search_outlined,
+                        color: Colors.white,
+                      ),
+                      focusColor: Colors.white,
+                      hintText: 'What do you want to listen to?',
+                      hintStyle: GoogleFonts.montserrat(
+                          textStyle: const TextStyle(
+                              color: Color.fromARGB(113, 158, 158, 158))),
+                      filled: true,
+                      fillColor: const Color.fromARGB(146, 50, 50, 50),
+                    ),
                   ),
                 )),
             Expanded(child: searchHistory())
@@ -125,7 +130,7 @@ class _SearchScreenState extends State<SearchScreen> {
   searchHistory() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: another.length == 0
+      child: another.isEmpty
           ? Center(
               child: Text(
               "No Songs Found",
@@ -150,6 +155,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           showNotification: true,
                           headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
                           loopMode: LoopMode.playlist);
+
                       setState(() {});
                       Navigator.push(
                         context,
@@ -157,6 +163,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           builder: ((context) => MusicPlayScreen(index: index)),
                         ),
                       );
+                      FocusScope.of(context).unfocus();
                     },
                     leading: QueryArtworkWidget(
                       artworkFit: BoxFit.cover,

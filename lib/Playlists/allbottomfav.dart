@@ -95,7 +95,7 @@ class _AddtoPlaylist1State extends State<AddtoPlaylist1> {
                                                   playlistbox.getAt(
                                                       index); //? it retreives the index from playlistbox
                                               List<Songs>? plnewsongs = plsongs!
-                                                  .playlistssongs; //?here we take the corresponding index from all song list
+                                                  .playlistssongs; //?here we take the  index from all song list
                                               Box<Songs> box =
                                                   Hive.box('Songs');
                                               List<Songs> dbAllsongs =
@@ -125,14 +125,7 @@ class _AddtoPlaylist1State extends State<AddtoPlaylist1> {
                                                           widget.songIndex]
                                                       .id,
                                                 ));
-                                                // playlistbox.putAt(
-                                                //     index,
-                                                //     PlaylistSongs(
-                                                //         playlistname:
-                                                //             allplay[index]
-                                                //                 .playlistname,
-                                                //         playlistssongs:
-                                                //             plnewsongs));
+
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
                                                         backgroundColor:

@@ -48,6 +48,8 @@ dependencies:
   assets_audio_player: 
   switcher_button: ^0.0.4
   flutter_markdown: ^0.6.13
+  readmore: ^2.2.0
+  flutter_lyric: ^2.0.4+6
   
   
   

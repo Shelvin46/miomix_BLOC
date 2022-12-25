@@ -6,12 +6,10 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:miomix/Models/dbfunction.dart';
-import 'package:miomix/Models/favourite.dart';
 import 'package:miomix/Playlists/allbottomfav.dart';
 import 'package:miomix/Screens/playscreen.dart';
 import 'package:miomix/favourites/favadd.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-
 import '../Models/allsonglist.dart';
 import '../Models/mostlyplayed.dart';
 import '../Models/recentlyplayed.dart';

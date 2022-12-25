@@ -88,38 +88,6 @@ class _MosltlyPlayedScreenState extends State<MosltlyPlayedScreen> {
                       SizedBox(
                         width: width1 * 0.2,
                       ),
-                      // GestureDetector(
-                      //   onTap: () {
-                      //     showDialog(
-                      //       context: context,
-                      //       builder: (context) {
-                      //         return AlertDialog(
-                      //           title: const Text("Remove all Songs"),
-                      //           content: const Text("Are You Sure ?"),
-                      //           actions: [
-                      //             TextButton(
-                      //                 onPressed: () {
-                      //                   Navigator.pop(context);
-                      //                 },
-                      //                 child: const Text("Cancel")),
-                      //             TextButton(
-                      //                 onPressed: () {
-                      //                   // mostlyplayedbox.clear()
-                      //                   Navigator.pop(context);
-                      //                 },
-                      //                 child: const Text("Remove"))
-                      //           ],
-                      //         );
-                      //       },
-                      //     );
-                      //   },
-                      //   child: const Icon(
-                      //     Icons.delete,
-                      //     color: Colors.white,
-
-                      //     // color: Color(Colors.white)
-                      //   ),
-                      // ),
                     ],
                   ),
                 ],
@@ -211,43 +179,43 @@ class _MosltlyPlayedScreenState extends State<MosltlyPlayedScreen> {
                                 ),
                               ),
                             ),
-                            trailing: IconButton(
-                              onPressed: (() {
-                                // showModalBottomSheet(
-                                //   backgroundColor: Colors.black,
-                                //   shape: const RoundedRectangleBorder(
-                                //     borderRadius: BorderRadius.vertical(
-                                //       top: Radius.circular(20),
-                                //     ),
-                                //   ),
-                                //   context: context,
-                                //   builder: ((context) {
-                                //     return SizedBox(
-                                //       height: 200,
-                                //       child: Column(
-                                //         children: const [
-                                //           // AddToPlalistbutton(songindex: index),
-                                //           SizedBox(
-                                //             height: 10,
-                                //           ),
-                                //           // addToFavorite(
-                                //           //   index: index,
-                                //           // )
-                                //           /* TextButton(
-                                //         onPressed: () {},
-                                //         child: const Text("Add to Favorites")) */
-                                //         ],
-                                //       ),
-                                //     );
-                                //   }
-                                //   ),
-                                // );
-                              }),
-                              icon: const Icon(
-                                Icons.more_vert,
-                                color: Colors.grey,
-                              ),
-                            ),
+                            // trailing: IconButton(
+                            //   onPressed: (() {
+                            //     // showModalBottomSheet(
+                            //     //   backgroundColor: Colors.black,
+                            //     //   shape: const RoundedRectangleBorder(
+                            //     //     borderRadius: BorderRadius.vertical(
+                            //     //       top: Radius.circular(20),
+                            //     //     ),
+                            //     //   ),
+                            //     //   context: context,
+                            //     //   builder: ((context) {
+                            //     //     return SizedBox(
+                            //     //       height: 200,
+                            //     //       child: Column(
+                            //     //         children: const [
+                            //     //           // AddToPlalistbutton(songindex: index),
+                            //     //           SizedBox(
+                            //     //             height: 10,
+                            //     //           ),
+                            //     //           // addToFavorite(
+                            //     //           //   index: index,
+                            //     //           // )
+                            //     //           /* TextButton(
+                            //     //         onPressed: () {},
+                            //     //         child: const Text("Add to Favorites")) */
+                            //     //         ],
+                            //     //       ),
+                            //     //     );
+                            //     //   }
+                            //     //   ),
+                            //     // );
+                            //   }),
+                            //   icon: const Icon(
+                            //     Icons.more_vert,
+                            //     color: Colors.grey,
+                            //   ),
+                            // ),
                           ),
                         );
                       },

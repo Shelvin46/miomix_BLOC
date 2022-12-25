@@ -250,57 +250,6 @@ class _ListScreenState extends State<ListScreen> {
       },
     );
   }
-
-  favoritesHomeListing() {
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
-
-    return Padding(
-      padding: EdgeInsets.fromLTRB(width * 0.0188, height * 0.0106, 0, 0),
-      child: SizedBox(
-        height: 200,
-        child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.all(10),
-            itemBuilder: ((context, index) {
-              return GestureDetector(
-                onTap: () {},
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0, height * 0.0106, 0, 0),
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: const FlutterLogo(
-                            size: 140,
-                          )),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      "Music",
-                      maxLines: 1,
-                      // overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
-                          textStyle: TextStyle(
-                              fontSize: width * 0.0317,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500)),
-                    )
-                  ],
-                ),
-              );
-            }),
-            separatorBuilder: ((context, index) {
-              return SizedBox(
-                width: width * 0.024,
-              );
-            }),
-            itemCount: 10),
-      ),
-    );
-  }
   //<-------------------------------------------------------------------------Favorite songs---------------------------------------------------------------------------------------------------------------------->
 
   //<------------------------------------------------------------------------Listing Songs-------------------------------------------------------------------------------------------------------------------->

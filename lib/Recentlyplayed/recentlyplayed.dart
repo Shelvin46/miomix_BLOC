@@ -158,46 +158,46 @@ class _RecentlyPlayedScreenState extends State<RecentlyPlayedScreen> {
                               ),
                             ),
                           ),
-                          trailing: IconButton(
-                            onPressed: (() {
-                              // showModalBottomSheet(
-                              //   backgroundColor: Colors.black,
-                              //   shape: const RoundedRectangleBorder(
-                              //     borderRadius: BorderRadius.vertical(
-                              //       top: Radius.circular(20),
-                              //     ),
-                              //   ),
-                              //   context: context,
-                              //   builder: ((context) {
-                              //     return SizedBox(
-                              //       height: 150 /* height * 0.13 */,
-                              //       child: Column(
-                              //         children: [
-                              //           SizedBox(
-                              //             height: height1 * 0.05,
-                              //           ),
-                              //           const Text(
-                              //             'Add To Playlist',
-                              //             style: TextStyle(
-                              //               color: Colors.white,
-                              //               fontSize: 18,
-                              //             ),
-                              //           ),
-                              //           SizedBox(
-                              //             height: height1 * 0.011,
-                              //           ),
-                              //           AddtoFavourite(index: index),
-                              //         ],
-                              //       ),
-                              //     );
-                              //   }),
-                              // );
-                            }),
-                            icon: const Icon(
-                              Icons.more_vert,
-                              color: Colors.grey,
-                            ),
-                          ),
+                          // trailing: IconButton(
+                          //   onPressed: (() {
+                          //     // showModalBottomSheet(
+                          //     //   backgroundColor: Colors.black,
+                          //     //   shape: const RoundedRectangleBorder(
+                          //     //     borderRadius: BorderRadius.vertical(
+                          //     //       top: Radius.circular(20),
+                          //     //     ),
+                          //     //   ),
+                          //     //   context: context,
+                          //     //   builder: ((context) {
+                          //     //     return SizedBox(
+                          //     //       height: 150 /* height * 0.13 */,
+                          //     //       child: Column(
+                          //     //         children: [
+                          //     //           SizedBox(
+                          //     //             height: height1 * 0.05,
+                          //     //           ),
+                          //     //           const Text(
+                          //     //             'Add To Playlist',
+                          //     //             style: TextStyle(
+                          //     //               color: Colors.white,
+                          //     //               fontSize: 18,
+                          //     //             ),
+                          //     //           ),
+                          //     //           SizedBox(
+                          //     //             height: height1 * 0.011,
+                          //     //           ),
+                          //     //           AddtoFavourite(index: index),
+                          //     //         ],
+                          //     //       ),
+                          //     //     );
+                          //     //   }),
+                          //     // );
+                          //   }),
+                          //   icon: const Icon(
+                          //     Icons.more_vert,
+                          //     color: Colors.grey,
+                          //   ),
+                          // ),
                         );
                       }),
                       separatorBuilder: (context, index) {

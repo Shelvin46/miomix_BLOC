@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:miomix/Screens/searchscreen.dart';
 import 'package:miomix/Settingscreen/popup.dart';
+import 'package:miomix/Settingscreen/privacy_policy.dart';
+import 'package:miomix/Settingscreen/termsandconditions.dart';
 import 'package:switcher_button/switcher_button.dart';
 
 import '../Models/dbfunction.dart';
@@ -64,12 +66,17 @@ class _SetttingScreenState extends State<SetttingScreen> {
                   EdgeInsets.fromLTRB(width1 * 0.0400, 0, width1 * 0.0200, 0),
               child: InkWell(
                 onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (builder) {
-                        return settingmenupopup(
-                            mdFilename: 'termsandconditons.md');
-                      });
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) {
+                      return TermsAndconditions();
+                    },
+                  ));
+                  // showDialog(
+                  //     context: context,
+                  //     builder: (builder) {
+                  //       return settingmenupopup(
+                  //           mdFilename: 'termsandconditons.md');
+                  //     });
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -94,11 +101,9 @@ class _SetttingScreenState extends State<SetttingScreen> {
                   EdgeInsets.fromLTRB(width1 * 0.0400, 0, width1 * 0.0200, 0),
               child: InkWell(
                 onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (builder) {
-                        return settingmenupopup(mdFilename: 'privacypolicy.md');
-                      });
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => PrivacyPolicy(),
+                  ));
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -144,31 +149,31 @@ class _SetttingScreenState extends State<SetttingScreen> {
             Padding(
               padding:
                   EdgeInsets.fromLTRB(width1 * 0.0400, 0, width1 * 0.0200, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) => bottomSheet(context),
-                      );
-                    },
-                    child: Container(
+              child: InkWell(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => bottomSheet(context),
+                  );
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
                       child: Text(
                         'Nickname',
                         style: TextStyle(color: Colors.white, fontSize: 22),
                       ),
                     ),
-                  ),
-                  // SizedBox(
-                  //   width: 13,
-                  // ),
-                  const Icon(
-                    Icons.arrow_forward_ios_outlined,
-                    color: Colors.white,
-                  )
-                ],
+                    // SizedBox(
+                    //   width: 13,
+                    // ),
+                    const Icon(
+                      Icons.arrow_forward_ios_outlined,
+                      color: Colors.white,
+                    )
+                  ],
+                ),
               ),
             ),
             const SizedBox(
