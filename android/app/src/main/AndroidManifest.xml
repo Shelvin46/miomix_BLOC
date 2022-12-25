@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL-STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="miomix"
+        android:label="MioMix"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
