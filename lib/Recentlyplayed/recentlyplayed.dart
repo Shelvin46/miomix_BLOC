@@ -5,7 +5,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:miomix/Models/dbfunction.dart';
 import 'package:miomix/Models/recentlyplayed.dart';
 import 'package:miomix/Screens/playscreen.dart';
-import 'package:miomix/favourites/favadd.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class RecentlyPlayedScreen extends StatefulWidget {
