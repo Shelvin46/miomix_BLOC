@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:hive/hive.dart';
 import 'package:miomix/Models/favourite.dart';
 import 'package:miomix/Models/mostlyplayed.dart';
@@ -52,7 +54,8 @@ updateRecentlyPlayed(RecentPlayed value, index) {
 }
 
 updatePlayedSongCount(MostPlayed value, int index) {
-  //List<MostPlayed> mlist = mostlyplayedbox.values.toList();k
+  log(value.toString());
+  //List<MostPlayed> mlist = mostlyplayedbox.values.toList();
   int count = value.count;
   //every time call the function the value count incemented in one by one
   value.count = count + 1;

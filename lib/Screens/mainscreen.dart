@@ -3,7 +3,6 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:miomix/Models/allsonglist.dart';
 import 'package:miomix/Models/dbfunction.dart';
 import 'package:miomix/Mostlyplayed/mosltlyplayed.dart';
 import 'package:miomix/Recentlyplayed/recentlyplayed.dart';
@@ -13,42 +12,11 @@ import 'package:miomix/Settingscreen/settingscreen.dart';
 import 'package:miomix/favourites/favhome.dart';
 import '../Models/nickname.dart';
 
-class ListScreen extends StatefulWidget {
-  const ListScreen({super.key});
+class ListScreen extends StatelessWidget {
+  ListScreen({super.key});
 
-  @override
-  State<ListScreen> createState() => _ListScreenState();
-}
-
-class _ListScreenState extends State<ListScreen> {
   late List<nickName> userName;
-  late bool playerVisibility;
-  final box = Songbox.getInstance(); //contains copy of all songs
-  List<Audio> convertAudios =
-      []; // this object used for convering the audios in the package of asset audio player
-
-  @override
-  void initState() {
-    List<Songs> dbSongs = box.values.toList(); // creating object of Songs list
-
-    for (var item in dbSongs) {
-      // here converting audios using the package of assrt audio player
-      convertAudios.add(
-        Audio.file(
-          item.songurl!,
-          metas: Metas(
-            title: item.songname,
-            artist: item.artist,
-            id: item.id.toString(),
-          ),
-        ),
-      );
-    }
-    setState(() {});
-    // ignore: todo
-    // TODO: implement initState
-    super.initState();
-  }
+  // this object used for convering the audios in the package of asset audio player
 
   AssetsAudioPlayer audioPlayer = AssetsAudioPlayer.withId('0');
 
@@ -62,7 +30,7 @@ class _ListScreenState extends State<ListScreen> {
       builder: (context, value, child) {
         userName = value.values.toList();
         return Scaffold(
-          bottomSheet: const MiniPlayer(),
+          bottomSheet: MiniPlayer(),
           // bottomSheet: miniPlayer(),
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(50.0),
@@ -138,7 +106,7 @@ class _ListScreenState extends State<ListScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) {
-                                return const MosltlyPlayedScreen();
+                                return MosltlyPlayedScreen();
                               },
                             ),
                           );
@@ -177,7 +145,7 @@ class _ListScreenState extends State<ListScreen> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) {
-                                return const RecentlyPlayedScreen();
+                                return RecentlyPlayedScreen();
                               },
                             ),
                           );
@@ -216,7 +184,7 @@ class _ListScreenState extends State<ListScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  const FavHomeList(),
+                   FavHomeList(),
 
                   Row(
                     children: [
@@ -236,7 +204,7 @@ class _ListScreenState extends State<ListScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  const AllSongList(),
+                  AllSongList(),
                   // listView(),
                   //miniPlayer()
                   const SizedBox(height: 100),
@@ -252,7 +220,7 @@ class _ListScreenState extends State<ListScreen> {
 
   //<------------------------------------------------------------------------Listing Songs-------------------------------------------------------------------------------------------------------------------->
 
-  addtoPlaylist() async {
+  addtoPlaylist(context) async {
     final height1 = MediaQuery.of(context).size.height;
     final width1 = MediaQuery.of(context).size.width;
     return showModalBottomSheet(
@@ -285,7 +253,7 @@ class _ListScreenState extends State<ListScreen> {
                       return ListTile(
                         leading: GestureDetector(
                           onTap: () {
-                            SnackbarMessage();
+                            SnackbarMessage(context);
                             Navigator.pop(context);
                           },
                           child: const CircleAvatar(
@@ -314,7 +282,7 @@ class _ListScreenState extends State<ListScreen> {
   //<-----------------------------------------------------------------------song added into playlist -------------------------------------------------------------------------------------------------------------------------->
 
   // ignore: non_constant_identifier_names
-  SnackbarMessage() {
+  SnackbarMessage(context) {
     return ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         backgroundColor: Colors.black,
@@ -326,7 +294,7 @@ class _ListScreenState extends State<ListScreen> {
     );
   }
 
-  favouriteAdd() {
+  favouriteAdd(context) {
     return ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         backgroundColor: Colors.black,

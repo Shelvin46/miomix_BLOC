@@ -4,14 +4,10 @@ import 'package:marquee/marquee.dart';
 import 'package:miomix/Screens/playscreen.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-class MiniPlayer extends StatefulWidget {
-  const MiniPlayer({super.key});
+class MiniPlayer extends StatelessWidget {
+   MiniPlayer({super.key});
 
-  @override
-  State<MiniPlayer> createState() => _MiniPlayerState();
-}
 
-class _MiniPlayerState extends State<MiniPlayer> {
   AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
   @override
   Widget build(BuildContext context) {
@@ -76,7 +72,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                                 await player.previous();
                                 if (isPlaying == false) {
                                   player.pause();
-                                  setState(() {});
+                                //  setState(() {});
                                 }
                               }),
                     SizedBox(
@@ -112,7 +108,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                                   await player.next();
                                   if (isPlaying == false) {
                                     player.pause();
-                                    setState(() {});
+                                  //  setState(() {});
                                   }
                                 },
                     )

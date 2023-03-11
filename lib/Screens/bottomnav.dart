@@ -3,9 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:miomix/Screens/libraryscreen.dart';
 import 'package:miomix/Screens/mainscreen.dart';
 import 'package:miomix/Screens/searchscreen.dart';
+import 'package:miomix/blocs/bottom_nav_bloc/bottom_nav_bloc_bloc.dart';
 
 class BottomScreen extends StatefulWidget {
   const BottomScreen({super.key});
@@ -16,51 +18,64 @@ class BottomScreen extends StatefulWidget {
 
 class _BottomScreenState extends State<BottomScreen> {
   @override
-  int currentSelectIndex = 0;
-
   List pages = [
-    const ListScreen(),
+    ListScreen(),
     const SearchScreen(),
     const LibraryScreen(),
   ];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: pages[currentSelectIndex],
-      bottomNavigationBar: NavigationBarTheme(
-        data: const NavigationBarThemeData(
-          backgroundColor: Color.fromARGB(255, 4, 45, 79),
-        ),
-        child: NavigationBar(
-          selectedIndex: currentSelectIndex,
-          onDestinationSelected: (indexx) =>
-              setState(() => this.currentSelectIndex = indexx),
-          height: 65,
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(
-                Icons.home_outlined,
-                color: Colors.white,
-              ),
-              label: '',
+    return BlocBuilder<BottomNavBlocBloc, BottomNavBlocState>(
+      builder: (context, state) {
+        int currentSelectIndex = state.count ?? 0;
+        return Scaffold(
+          body: pages[currentSelectIndex],
+          bottomNavigationBar: NavigationBarTheme(
+            data: const NavigationBarThemeData(
+              backgroundColor: Color.fromARGB(255, 4, 45, 79),
             ),
-            NavigationDestination(
-              icon: Icon(
-                Icons.search_outlined,
-                color: Colors.white,
-              ),
-              label: '',
+            child: NavigationBar(
+              selectedIndex: currentSelectIndex,
+              onDestinationSelected: (index) {
+                if (index == 0) {
+                  BlocProvider.of<BottomNavBlocBloc>(context)
+                      .add(FirstScreen());
+                } else if (index == 1) {
+                  BlocProvider.of<BottomNavBlocBloc>(context)
+                      .add(SecondScreen());
+                } else {
+                  BlocProvider.of<BottomNavBlocBloc>(context)
+                      .add(ThirdScreen());
+                }
+              },
+              height: 65,
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(
+                    Icons.home_outlined,
+                    color: Colors.white,
+                  ),
+                  label: '',
+                ),
+                NavigationDestination(
+                  icon: Icon(
+                    Icons.search_outlined,
+                    color: Colors.white,
+                  ),
+                  label: '',
+                ),
+                NavigationDestination(
+                  icon: Icon(
+                    Icons.queue_music_outlined,
+                    color: Colors.white,
+                  ),
+                  label: '',
+                )
+              ],
             ),
-            NavigationDestination(
-              icon: Icon(
-                Icons.queue_music_outlined,
-                color: Colors.white,
-              ),
-              label: '',
-            )
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,103 +1,88 @@
+import 'dart:developer';
+
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:miomix/Models/dbfunction.dart';
+import 'package:miomix/Models/recentlyplayed.dart';
 import 'package:miomix/Playlists/allbottomfav.dart';
 import 'package:miomix/Screens/playscreen.dart';
+import 'package:miomix/blocs/home_songs/home_songs_bloc.dart';
 import 'package:miomix/favourites/favadd.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+
 import '../Models/allsonglist.dart';
 import '../Models/mostlyplayed.dart';
-import '../Models/recentlyplayed.dart';
+import '../blocs/recently_played_bloc/recently_played_bloc_bloc.dart';
 
-class AllSongList extends StatefulWidget {
-  const AllSongList({super.key});
+class AllSongList extends StatelessWidget {
+  AllSongList({super.key});
+  List<Audio> convertAudio = [];
 
-  @override
-  State<AllSongList> createState() => _AllSongListState();
-}
-
-class _AllSongListState extends State<AllSongList> {
   late bool isplaying;
-  late bool playerVisibility;
-  final box = Songbox.getInstance();
-  List<Audio> convertAudios = [];
-  AssetsAudioPlayer audioPlayer = AssetsAudioPlayer.withId('0');
-  // List<MostPlayed> msongs =[];
-  // msongs=MostPlayed(songname: , songurl: songurl, duration: duration, artist: artist, count: count, id: id)
-//
-  @override
-  void initState() {
-    List<Songs> dbSongs = box.values.toList();
-    // creating object of Songs list
 
-    for (var item in dbSongs) {
-      // here converting audios using the package of assrt audio player
-      convertAudios.add(
-        Audio.file(
-          item.songurl!,
-          metas: Metas(
-            title: item.songname,
-            artist: item.artist,
-            id: item.id.toString(),
-          ),
-        ),
-      );
-    }
-    setState(() {});
-    // ignore: todo
-    // TODO: implement initState
-    super.initState();
-  }
+  AssetsAudioPlayer audioPlayer = AssetsAudioPlayer.withId('0');
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<HomeSongsBloc>(context).add(Initialize());
+    });
     final height1 = MediaQuery.of(context).size.height;
-    final width1 = MediaQuery.of(context).size.width;
-    return ValueListenableBuilder<Box<Songs>>(
-      valueListenable: box.listenable(),
-      builder: (context, Box<Songs> data, child) {
-        List<Songs> alls = data.values.toList();
 
+    return BlocBuilder<HomeSongsBloc, HomeSongsState>(
+      builder: (context, state) {
         List<MostPlayed> mostoftimeplayed = mostlyplayedbox.values.toList();
-
-        if (alls.isEmpty) {
-          return const CircularProgressIndicator();
+        convertAudio.clear();
+        for (var item in state.dbSongs) {
+          convertAudio.add(Audio.file(item.songurl!,
+              metas: Metas(
+                  title: item.songname,
+                  artist: item.artist,
+                  id: item.id.toString())));
         }
         return ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: alls.length,
+            itemCount: state.dbSongs.length,
             itemBuilder: (context, index) {
-              Songs songs = alls[index];
-              MostPlayed MPsongs = mostoftimeplayed[index];
-              RecentPlayed rsongs;
-              //FavSongs fsongs;
+              Songs songs = state.dbSongs[index];
+              MostPlayed Mpsongs = mostoftimeplayed[index];
+              log(Mpsongs.toString());
 
+              RecentPlayed rsongs;
               return Padding(
                 padding: const EdgeInsets.fromLTRB(0, 6, 0, 3),
                 child: ListTile(
-                  onTap: (() {
+                  onTap: (() async {
+                    //  await playerOnTap();
                     rsongs = RecentPlayed(
-                        songname: songs.songname,
-                        artist: songs.artist,
-                        id: songs.id,
-                        duration: songs.duration,
-                        songurl: songs.songurl);
-                    // updatePlayedSongCount(rsongs, index);
+                      id: songs.id,
+                      artist: songs.artist,
+                      duration: songs.duration,
+                      songname: songs.songname,
+                      songurl: songs.songurl,
+                    );
+
                     updateRecentlyPlayed(rsongs, index);
-                    updatePlayedSongCount(MPsongs, index);
+                    updatePlayedSongCount(Mpsongs, index);
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      return BlocProvider.of<RecentlyPlayedBlocBloc>(context)
+                          .add(Recently());
+                    });
+
+                    LoopMode loopMode =
+                        convertAudio.length == state.dbSongs.length
+                            ? LoopMode.none
+                            : LoopMode.playlist;
 
                     audioPlayer.open(
-                        Playlist(audios: convertAudios, startIndex: index),
-                        // showNotification: musicNotif,
+                        Playlist(audios: convertAudio, startIndex: index),
                         headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
-                        loopMode: LoopMode.playlist);
-                    setState(() {});
+                        loopMode: loopMode);
+
+                    // setState(() {});
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -110,7 +95,7 @@ class _AllSongListState extends State<AllSongList> {
                   //----------------------------------------Displaying The Song Image--------------------------------------------------
                   leading: QueryArtworkWidget(
                     artworkFit: BoxFit.cover,
-                    id: songs.id!,
+                    id: state.dbSongs[index].id!,
                     type: ArtworkType.AUDIO,
                     artworkQuality: FilterQuality.high,
                     size: 2000,
@@ -126,7 +111,7 @@ class _AllSongListState extends State<AllSongList> {
                   ),
                   title: SingleChildScrollView(
                     child: Text(
-                      songs.songname!,
+                      state.dbSongs[index].songname!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.montserrat(
@@ -141,7 +126,7 @@ class _AllSongListState extends State<AllSongList> {
                   //----------------------------------------Trailing Menu Pop UP--------------------------------------------------
                   trailing: IconButton(
                     onPressed: (() {
-                      setState(() {});
+                      // setState(() {});
                       showModalBottomSheet(
                         backgroundColor: Colors.black,
                         shape: const RoundedRectangleBorder(
@@ -181,9 +166,8 @@ class _AllSongListState extends State<AllSongList> {
     );
   }
 }
-//how to set favourite songlist in music player app using flutter?
 
-
-
-
-
+//   playerOnTap() {
+//     List<Songs> dbsongs = box.values.toList();
+//   }
+// }

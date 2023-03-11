@@ -11,35 +11,31 @@ import 'package:on_audio_query/on_audio_query.dart';
 import 'package:flutter_lyric/lyrics_reader.dart';
 
 // ignore: must_be_immutable
-class MusicPlayScreen extends StatefulWidget {
+class MusicPlayScreen extends StatelessWidget {
   int index;
   MusicPlayScreen({super.key, required this.index});
 
-  @override
-  State<MusicPlayScreen> createState() => _MusicPlayScreenState();
-}
-
-class _MusicPlayScreenState extends State<MusicPlayScreen> {
   var lyricPadding = 40.0;
+
   var lyricUI = UINetease();
+
   var lyricModel = LyricsModelBuilder.create();
+
   bool onPress = false;
+
   bool isRepeat = false;
+
   bool isNext = false;
-  late List<Songs> dbsongs;
+
+  late List<Songs> dbsongs = box.values.toList();
+
   final box = Songbox.getInstance();
+
   bool click = true;
-  @override
-  void initState() {
-    setState(() {});
-    dbsongs = box.values.toList();
-    super.initState();
-    setState(() {});
-  }
 
   @override
   Widget build(BuildContext context) {
-    setState(() {});
+    // setState(() {});
     final height1 = MediaQuery.of(context).size.height;
     final width1 = MediaQuery.of(context).size.width;
     return player.builderCurrent(builder: (context, playing) {
@@ -137,7 +133,6 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
                             model: lyricModel.getModel(),
                             position: position.inSeconds,
                             lyricUi: lyricUI,
-                            playing: mounted,
                             emptyBuilder: () => Center(
                               child: Text(
                                 "No lyrics",
@@ -239,7 +234,7 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
                                 await player.previous();
                                 if (isPlaying == false) {
                                   player.pause();
-                                  setState(() {});
+                                  //setState(() {});
                                 }
                               });
                   },
@@ -312,7 +307,7 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
                                   await player.next();
                                   if (isPlaying == false) {
                                     player.pause();
-                                    setState(() {});
+                                    // setState(() {});
                                   }
                                 },
                     );
@@ -329,7 +324,6 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
                     children: [
                       IconButton(
                         onPressed: () {
-                          setState(() {});
                           if (isRepeat) {
                             player.setLoopMode(LoopMode.none);
                             isRepeat = false;
@@ -347,18 +341,7 @@ class _MusicPlayScreenState extends State<MusicPlayScreen> {
                       ),
                       IconButton(
                         onPressed: () {
-                          setState(() {
-                            onPress = !onPress;
-                          });
-                        },
-                        icon: const Icon(
-                          Icons.mic_external_on,
-                          color: Colors.white,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {});
+                          // setState(() {});
                           player.toggleShuffle();
                         },
                         icon: player.isShuffling.value
