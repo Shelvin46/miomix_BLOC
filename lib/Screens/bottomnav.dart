@@ -20,7 +20,7 @@ class _BottomScreenState extends State<BottomScreen> {
   @override
   List pages = [
     ListScreen(),
-    const SearchScreen(),
+    SearchScreen(),
     const LibraryScreen(),
   ];
   @override

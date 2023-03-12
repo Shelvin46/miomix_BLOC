@@ -2,48 +2,58 @@ import 'dart:developer';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:miomix/Screens/playscreen.dart';
+import 'package:miomix/Screens/splashscreen.dart';
+import 'package:miomix/blocs/bloc/search_bloc_bloc.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import '../Models/allsonglist.dart';
+import '../debouncer/debouncer.dart';
 
 final TextEditingController searchController = TextEditingController();
 final box = Songbox.getInstance();
-late List<Songs> dbSongs;
+// late List<Songs> dbSongs;
 AssetsAudioPlayer audioPlayer = AssetsAudioPlayer.withId('0');
-List<Audio> allSongs = [];
-List<Songs> another = List.from(dbSongs);
+List<Audio> al = [];
 
-class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+class SearchScreen extends StatelessWidget {
+  SearchScreen({super.key});
+  List<Audio> convertSongs = [];
+  late List<Songs> another;
+  late List<Songs> compare;
+  final _debouncer = Debouncer(milliseconds: 1 * 1000);
 
-  @override
-  State<SearchScreen> createState() => _SearchScreenState();
-}
+//   @override
+//   State<SearchScreen> createState() => _SearchScreenState();
+// }
 
-class _SearchScreenState extends State<SearchScreen> {
-  @override
-  void initState() {
-    dbSongs = box.values.toList();
-    for (var item in another) {
-      allSongs.add(
-        Audio.file(
-          item.songurl.toString(),
-          metas: Metas(
-            artist: item.artist,
-            title: item.songname,
-            id: item.id.toString(),
-          ),
-        ),
-      );
-    }
-    //convertAudio();
-    log(another.toString());
-    super.initState();
-  }
+// class _SearchScreenState extends State<SearchScreen> {
+//   @override
+//   void initState() {
+//     dbSongs = box.values.toList();
+//     for (var item in another) {
+//       allSongs.add(
+//         Audio.file(
+//           item.songurl.toString(),
+//           metas: Metas(
+//             artist: item.artist,
+//             title: item.songname,
+//             id: item.id.toString(),
+//           ),
+//         ),
+//       );
+//     }
+//     //convertAudio();
+//     log(another.toString());
+//     super.initState();
+//   }
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      return BlocProvider.of<SearchBlocBloc>(context).add(InitializeSearch());
+    });
     final height1 = MediaQuery.of(context).size.height;
     final width1 = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -95,7 +105,17 @@ class _SearchScreenState extends State<SearchScreen> {
                     },
                     //focusNode: FocusScope.of(context),
                     controller: searchController,
-                    onChanged: (value) => updateList(value),
+                    onChanged: (value) async {
+                      BlocProvider.of<SearchBlocBloc>(context)
+                          .add(UpdateSearch(query: value));
+                      // BlocProvider.of<SearchBlocBloc>(context)
+                      //     .add(UpdateSearch(query: ""));
+
+                      //BlocProvider.of<SearchBlocBloc>(context)
+                      //.add(InitializeSearch());
+                      // List<Songs> searchResults =
+                      //     searchSongs(value, state.dbSongs);
+                    },
                     decoration: InputDecoration(
                       focusedBorder: const UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
@@ -117,7 +137,175 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                 )),
-            Expanded(child: searchHistory())
+            Expanded(child: BlocBuilder<SearchBlocBloc, SearchBlocState>(
+              builder: (context, state) {
+                if (state.dbSongs.isEmpty) {
+                  return const Center(
+                    child: Text("No songs"),
+                  );
+                } else if (state.isNull == true) {
+                  return const Center(
+                    child: Text("No Songs"),
+                  );
+                } else if (state.searchResults.isNotEmpty) {
+                  return
+                      //log(state.searchResults.toString());
+                      Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: state.searchResults.length,
+                      itemBuilder: ((context, index) {
+                        print("In search");
+                        convertSongs.clear();
+                        for (var element in state.searchResults) {
+                          convertSongs
+                              .add(Audio.file(element.songurl.toString(),
+                                  metas: Metas(
+                                    artist: element.artist,
+                                    title: element.songname,
+                                    id: element.id.toString(),
+                                  )));
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: ListTile(
+                            onTap: () {
+                              audioPlayer.open(
+                                  Playlist(
+                                      audios: convertSongs, startIndex: index),
+                                  showNotification: true,
+                                  headPhoneStrategy:
+                                      HeadPhoneStrategy.pauseOnUnplug,
+                                  loopMode: LoopMode.playlist);
+
+                              // setState(() {});
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: ((context) =>
+                                      MusicPlayScreen(index: index)),
+                                ),
+                              );
+                              final currentFocus = FocusScope.of(context);
+                              if (!currentFocus.hasPrimaryFocus &&
+                                  currentFocus.focusedChild != null) {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              }
+                            },
+                            leading: QueryArtworkWidget(
+                              artworkFit: BoxFit.cover,
+                              id: state.searchResults[index].id!,
+                              type: ArtworkType.AUDIO,
+                              artworkQuality: FilterQuality.high,
+                              size: 2000,
+                              quality: 100,
+                              artworkBorder: BorderRadius.circular(50),
+                              nullArtworkWidget: ClipRRect(
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(50)),
+                                child: Image.asset(
+                                  'assets/images/studio.png',
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            title: SingleChildScrollView(
+                              child: Text(
+                                state.searchResults[index].songname!,
+                                maxLines: 1,
+                                style: GoogleFonts.montserrat(
+                                  textStyle: const TextStyle(
+                                      fontSize: 13.43,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  );
+                }
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: state.dbSongs.length,
+                    itemBuilder: ((context, index) {
+                      convertSongs.clear();
+                      for (var element in state.dbSongs) {
+                        convertSongs.add(Audio.file(element.songurl.toString(),
+                            metas: Metas(
+                              artist: element.artist,
+                              title: element.songname,
+                              id: element.id.toString(),
+                            )));
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: ListTile(
+                          onTap: () {
+                            audioPlayer.open(
+                                Playlist(
+                                    audios: convertSongs, startIndex: index),
+                                showNotification: true,
+                                headPhoneStrategy:
+                                    HeadPhoneStrategy.pauseOnUnplug,
+                                loopMode: LoopMode.playlist);
+
+                            // setState(() {});
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: ((context) =>
+                                    MusicPlayScreen(index: index)),
+                              ),
+                            );
+                            final currentFocus = FocusScope.of(context);
+                            if (!currentFocus.hasPrimaryFocus &&
+                                currentFocus.focusedChild != null) {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            }
+                          },
+                          leading: QueryArtworkWidget(
+                            artworkFit: BoxFit.cover,
+                            id: state.dbSongs[index].id!,
+                            type: ArtworkType.AUDIO,
+                            artworkQuality: FilterQuality.high,
+                            size: 2000,
+                            quality: 100,
+                            artworkBorder: BorderRadius.circular(50),
+                            nullArtworkWidget: ClipRRect(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(50)),
+                              child: Image.asset(
+                                'assets/images/studio.png',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          title: SingleChildScrollView(
+                            child: Text(
+                              state.dbSongs[index].songname!,
+                              maxLines: 1,
+                              style: GoogleFonts.montserrat(
+                                textStyle: const TextStyle(
+                                    fontSize: 13.43,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                );
+                //return searchHistory();
+              },
+            ))
 
             // listView(context)
           ],
@@ -126,100 +314,43 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  searchHistory() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: another.isEmpty
-          ? Center(
-              child: Text(
-              "No Songs Found",
-              style: GoogleFonts.montserrat(
-                textStyle: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500),
-              ),
-            ))
-          : ListView.builder(
-              //physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: another.length,
-              itemBuilder: ((context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: ListTile(
-                    onTap: () {
-                      audioPlayer.open(
-                          Playlist(audios: allSongs, startIndex: index),
-                          showNotification: true,
-                          headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
-                          loopMode: LoopMode.playlist);
+  // searchHistory() {
+  //   // convertSongs.clear();
+  //   // for (var element in state.dbSongs) {
+  //   //   convertSongs.add(Audio.file(element.songurl.toString(),
+  //   //       metas: Metas(
+  //   //           artist: element.artist,
+  //   //           title: element.songname,
+  //   //           id: element.id.toString())));
+  //   // }
+  //   return
+  // }
 
-                      setState(() {});
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: ((context) => MusicPlayScreen(index: index)),
-                        ),
-                      );
-                      FocusScope.of(context).unfocus();
-                    },
-                    leading: QueryArtworkWidget(
-                      artworkFit: BoxFit.cover,
-                      id: another[index].id!,
-                      type: ArtworkType.AUDIO,
-                      artworkQuality: FilterQuality.high,
-                      size: 2000,
-                      quality: 100,
-                      artworkBorder: BorderRadius.circular(50),
-                      nullArtworkWidget: ClipRRect(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(50)),
-                        child: Image.asset(
-                          'assets/images/studio.png',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    title: SingleChildScrollView(
-                      child: Text(
-                        another[index].songname!,
-                        maxLines: 1,
-                        style: GoogleFonts.montserrat(
-                          textStyle: const TextStyle(
-                              fontSize: 13.43,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ),
-    );
+  List<Songs> searchSongs(String query, List<Songs> songs) {
+    return songs
+        .where((song) =>
+            song.songname!.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
-  void updateList(String value) {
-    setState(() {
-      another = dbSongs
-          .where((element) =>
-              element.songname!.toLowerCase().contains(value.toLowerCase()))
-          .toList();
-      allSongs.clear();
-      for (var item in another) {
-        allSongs.add(
-          Audio.file(
-            item.songurl.toString(),
-            metas: Metas(
-              artist: item.artist,
-              title: item.songname,
-              id: item.id.toString(),
-            ),
-          ),
-        );
-      }
-      log(allSongs.toString());
-    });
-  }
+  // void updateList(String value, context) {
+  //   another = compare
+  //       .where((element) =>
+  //           element.songname!.toLowerCase().contains(value.toLowerCase()))
+  //       .toList();
+
+  //   //allSongs.clear();
+  //   for (var item in another) {
+  //     convertSongs.add(
+  //       Audio.file(
+  //         item.songurl.toString(),
+  //         metas: Metas(
+  //           artist: item.artist,
+  //           title: item.songname,
+  //           id: item.id.toString(),
+  //         ),
+  //       ),
+  //     );
+  //   }
+  // }
 }
