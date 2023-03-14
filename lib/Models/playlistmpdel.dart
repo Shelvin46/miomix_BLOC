@@ -7,6 +7,6 @@ class PlaylistSongs {
   @HiveField(0)
   String? playlistname;
   @HiveField(1)
-  List<Songs>? playlistssongs; //?
+  List<Songs>? playlistssongs;
   PlaylistSongs({required this.playlistname, required this.playlistssongs});
 }

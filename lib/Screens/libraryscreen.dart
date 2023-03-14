@@ -1,22 +1,18 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:miomix/Models/allsonglist.dart';
 import 'package:miomix/Playlists/playlistscreen.dart';
+import 'package:miomix/blocs/bloc/playlist_songs_bloc.dart';
 import 'package:miomix/favourites/favoritelist.dart';
 import '../Models/dbfunction.dart';
 import '../Models/playlistmpdel.dart';
 
-class LibraryScreen extends StatefulWidget {
-  const LibraryScreen({super.key});
+class LibraryScreen extends StatelessWidget {
+  LibraryScreen({super.key});
 
-  @override
-  State<LibraryScreen> createState() => _LibraryScreenState();
-}
-
-class _LibraryScreenState extends State<LibraryScreen> {
   TextEditingController _textEditingController = TextEditingController();
   final formGlobalKey = GlobalKey<FormState>();
   TextEditingController controller = TextEditingController();
@@ -25,6 +21,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      return BlocProvider.of<PlaylistSongsBloc>(context)
+          .add(PlaylistSongsInitialP());
+    });
     final height1 = MediaQuery.of(context).size.height;
     final width1 = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -37,11 +37,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
               return bottomSheet(context);
             },
           );
-          //createPlaylist(context);
-          // showModalBottomSheet(
-          //   context: context,
-          //   builder: (context) => bottomSheet(context),
-          // );
         },
         child: const Icon(Icons.add),
       ),
@@ -173,164 +168,159 @@ class _LibraryScreenState extends State<LibraryScreen> {
             const SizedBox(
               height: 10,
             ),
-            Expanded(
-              child: ValueListenableBuilder(
-                valueListenable: playlistbox.listenable(),
-                builder: (context, data, child) {
-                  List<PlaylistSongs> allplay = data.values.toList();
-
-                  if (playlistbox.isEmpty) {
-                    return Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Align(
-                        heightFactor: 7.5,
-                        child: Center(
-                          child: Text(
-                            "No Playlist Created",
-                            style: GoogleFonts.montserrat(
-                                textStyle:
-                                    const TextStyle(color: Colors.white)),
-                          ),
+            Expanded(child: BlocBuilder<PlaylistSongsBloc, PlaylistSongsState>(
+              builder: (context, state) {
+                if (playlistbox.isEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Align(
+                      heightFactor: 7.5,
+                      child: Center(
+                        child: Text(
+                          "No Playlist Created",
+                          style: GoogleFonts.montserrat(
+                              textStyle: const TextStyle(color: Colors.white)),
                         ),
                       ),
-                    );
-                  }
-                  return ListView.separated(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Playlistscreen(
-                                allPlaylistSongs:
-                                    allplay[index].playlistssongs!,
-                                playlistindex: index,
-                                playlistname: allplay[index].playlistname!,
-                              ),
+                    ),
+                  );
+                }
+                return ListView.separated(
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Playlistscreen(
+                              allPlaylistSongs:
+                                  state.values[index].playlistssongs!,
+                              playlistindex: index,
+                              playlistname: state.values[index].playlistname!,
                             ),
                           ),
-                          leading: Container(
-                            height: height1 * 0.15,
-                            width: width1 * 0.17,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              image: const DecorationImage(
-                                image: AssetImage('assets/images/studio.png'),
-                                fit: BoxFit.fill,
-                              ),
+                        ),
+                        leading: Container(
+                          height: height1 * 0.15,
+                          width: width1 * 0.17,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: const DecorationImage(
+                              image: AssetImage('assets/images/studio.png'),
+                              fit: BoxFit.fill,
                             ),
                           ),
-                          title: Text(
-                            allplay[index].playlistname.toString(),
-                            style: GoogleFonts.montserrat(
-                              textStyle: const TextStyle(
-                                  fontSize: 13.43,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500),
-                            ),
+                        ),
+                        title: Text(
+                          state.values[index].playlistname.toString(),
+                          style: GoogleFonts.montserrat(
+                            textStyle: const TextStyle(
+                                fontSize: 13.43,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500),
                           ),
-                          trailing: IconButton(
-                            onPressed: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (context) {
-                                  return Container(
-                                    width: width1 * 0.449,
-                                    height: height1 * 0.20,
-                                    color: Colors.black,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return AlertDialog(
-                                                  title: const Text(
-                                                      'Delete Playlist'),
-                                                  content: const Text(
-                                                      'Are You Sure'),
-                                                  actions: [
-                                                    TextButton(
-                                                        onPressed: () {
-                                                          return Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: const Text(
-                                                            'Cancel')),
-                                                    TextButton(
-                                                        onPressed: () {
-                                                          playlistbox
-                                                              .deleteAt(index);
-                                                          deleteListSnackbar(
-                                                              context);
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: const Text(
-                                                            'Delete'))
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                          child: const Text(
-                                            'Delete Playlist',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20),
-                                          ),
+                        ),
+                        trailing: IconButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return Container(
+                                  width: width1 * 0.449,
+                                  height: height1 * 0.20,
+                                  color: Colors.black,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: const Text(
+                                                    'Delete Playlist'),
+                                                content:
+                                                    const Text('Are You Sure'),
+                                                actions: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        return Navigator.pop(
+                                                            context);
+                                                      },
+                                                      child:
+                                                          const Text('Cancel')),
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        playlistbox
+                                                            .deleteAt(index);
+                                                        deleteListSnackbar(
+                                                            context);
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child:
+                                                          const Text('Delete'))
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: const Text(
+                                          'Delete Playlist',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20),
                                         ),
-                                        const SizedBox(
-                                          height: 25,
+                                      ),
+                                      const SizedBox(
+                                        height: 25,
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          List<Songs>? exisitingSongs = state
+                                              .values[index].playlistssongs!;
+                                          showModalBottomSheet(
+                                            isScrollControlled: true,
+                                            context: context,
+                                            builder: (context) {
+                                              return bottomSheetedit(
+                                                  context,
+                                                  index,
+                                                  state.values[index]
+                                                      .playlistname!,
+                                                  exisitingSongs);
+                                            },
+                                          );
+                                        },
+                                        child: const Text(
+                                          'Rename playlist',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20),
                                         ),
-                                        InkWell(
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            List<Songs>? exisitingSongs =
-                                                allplay[index].playlistssongs!;
-                                            showModalBottomSheet(
-                                              isScrollControlled: true,
-                                              context: context,
-                                              builder: (context) {
-                                                return bottomSheetedit(
-                                                    context,
-                                                    index,
-                                                    allplay[index]
-                                                        .playlistname!,
-                                                    exisitingSongs);
-                                              },
-                                            );
-                                          },
-                                          child: const Text(
-                                            'Rename playlist',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.more_vert_sharp),
-                            color: Colors.white,
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider();
-                      },
-                      itemCount: allplay.length);
-                },
-              ),
-            ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          icon: const Icon(Icons.more_vert_sharp),
+                          color: Colors.white,
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const Divider();
+                    },
+                    itemCount: state.values.length);
+              },
+            )
+                //List<PlaylistSongs> allplay = data.values.toList();
+
+                ),
             // <----------------------------------------------------------------- Playlists---------------------------------------------------------------------------------------------------------------------->
           ],
         ),
@@ -446,6 +436,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
               playlistbox.add(PlaylistSongs(
                   playlistname: _textEditingController.text,
                   playlistssongs: []));
+              BlocProvider.of<PlaylistSongsBloc>(context)
+                  .add(PlaylistSongsInitialP());
               Navigator.pop(context);
             }
           },

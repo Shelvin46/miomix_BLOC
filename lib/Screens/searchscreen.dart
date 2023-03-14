@@ -103,18 +103,10 @@ class SearchScreen extends StatelessWidget {
                     onTap: () {
                       FocusManager.instance.primaryFocus?.unfocus();
                     },
-                    //focusNode: FocusScope.of(context),
                     controller: searchController,
                     onChanged: (value) async {
                       BlocProvider.of<SearchBlocBloc>(context)
                           .add(UpdateSearch(query: value));
-                      // BlocProvider.of<SearchBlocBloc>(context)
-                      //     .add(UpdateSearch(query: ""));
-
-                      //BlocProvider.of<SearchBlocBloc>(context)
-                      //.add(InitializeSearch());
-                      // List<Songs> searchResults =
-                      //     searchSongs(value, state.dbSongs);
                     },
                     decoration: InputDecoration(
                       focusedBorder: const UnderlineInputBorder(
@@ -148,15 +140,12 @@ class SearchScreen extends StatelessWidget {
                     child: Text("No Songs"),
                   );
                 } else if (state.searchResults.isNotEmpty) {
-                  return
-                      //log(state.searchResults.toString());
-                      Padding(
+                  return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ListView.builder(
                       shrinkWrap: true,
                       itemCount: state.searchResults.length,
                       itemBuilder: ((context, index) {
-                        print("In search");
                         convertSongs.clear();
                         for (var element in state.searchResults) {
                           convertSongs

@@ -21,7 +21,7 @@ class _BottomScreenState extends State<BottomScreen> {
   List pages = [
     ListScreen(),
     SearchScreen(),
-    const LibraryScreen(),
+    LibraryScreen(),
   ];
   @override
   Widget build(BuildContext context) {

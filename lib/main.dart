@@ -7,6 +7,8 @@ import 'package:miomix/Models/mostlyplayed.dart';
 import 'package:miomix/Models/recentlyplayed.dart';
 import 'package:miomix/Screens/splashscreen.dart';
 import 'package:miomix/blocs/adding_favorite/adding_favorite_bloc.dart';
+import 'package:miomix/blocs/bloc/adding_playlist_bloc.dart';
+import 'package:miomix/blocs/bloc/playlist_songs_bloc.dart';
 import 'package:miomix/blocs/bloc/search_bloc_bloc.dart';
 import 'package:miomix/blocs/bottom_nav_bloc/bottom_nav_bloc_bloc.dart';
 import 'package:miomix/blocs/favorite_list/favorite_list_bloc.dart';
@@ -88,6 +90,16 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) {
             return SearchBlocBloc();
+          },
+        ),
+        BlocProvider(
+          create: (context) {
+            return AddingPlaylistBloc();
+          },
+        ),
+        BlocProvider(
+          create: (context) {
+            return PlaylistSongsBloc();
           },
         )
       ],

@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +37,6 @@ class MusicPlayScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // setState(() {});
     final height1 = MediaQuery.of(context).size.height;
     final width1 = MediaQuery.of(context).size.width;
     return player.builderCurrent(builder: (context, playing) {
@@ -86,7 +87,9 @@ class MusicPlayScreen extends StatelessWidget {
                             element.songname ==
                             playing.audio.audio.metas.title));
                   }),
-                  AddtoPlaylist2(songIndex: playing.index)
+                  AddtoPlaylist2(
+                      songIndex: dbsongs.indexWhere((element) =>
+                          element.songname == playing.audio.audio.metas.title))
                 ],
               ),
               const SizedBox(

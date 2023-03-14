@@ -1,15 +1,17 @@
 import 'dart:developer';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:miomix/Models/dbfunction.dart';
 import 'package:miomix/Screens/playscreen.dart';
+import 'package:miomix/blocs/bloc/playlist_songs_bloc.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import '../Models/allsonglist.dart';
 import '../Models/playlistmpdel.dart';
 
-class Playlistscreen extends StatefulWidget {
+class Playlistscreen extends StatelessWidget {
   Playlistscreen({
     super.key,
     required this.allPlaylistSongs,
@@ -20,28 +22,26 @@ class Playlistscreen extends StatefulWidget {
   int playlistindex;
   String playlistname;
 
-  @override
-  State<Playlistscreen> createState() => _PlaylistscreenState();
-}
-
-class _PlaylistscreenState extends State<Playlistscreen> {
-  @override
   AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
   List<Audio> plstsongs = [];
   @override
-  void initState() {
-    for (var song in widget.allPlaylistSongs) {
-      plstsongs.add(Audio.file(song.songurl.toString(),
-          metas: Metas(
-              title: song.songname,
-              artist: song.artist,
-              id: song.id.toString())));
-    }
-    super.initState();
-  }
+  // void initState() {
+  //   for (var song in widget.allPlaylistSongs) {
+  //     plstsongs.add(Audio.file(song.songurl.toString(),
+  //         metas: Metas(
+  //             title: song.songname,
+  //             artist: song.artist,
+  //             id: song.id.toString())));
+  //   }
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      return BlocProvider.of<PlaylistSongsBloc>(context)
+          .add(PlaylistSongsInitialP());
+    });
     final height1 = MediaQuery.of(context).size.height;
     final width1 = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -66,11 +66,12 @@ class _PlaylistscreenState extends State<Playlistscreen> {
                             horizontal: width1 * 0.05,
                             vertical: height1 * 0.02),
                         child: Text(
-                          widget.playlistname,
+                          playlistname,
                           style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold),
+                            color: Colors.white,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -89,133 +90,137 @@ class _PlaylistscreenState extends State<Playlistscreen> {
   }
 
   listView1(context) {
-    return Expanded(
-      child: ValueListenableBuilder(
-        valueListenable: playlistbox.listenable(),
-        builder: (context, data, _) {
-          List<PlaylistSongs> plsongs = playlistbox.values.toList();
-          List<Songs>? songs = plsongs[widget.playlistindex]
-              .playlistssongs; //? here taking which playlist and the songs
-          log(plsongs.toString());
-          if (songs!.isEmpty) {
-            return Align(
-              heightFactor: 7.5,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Center(
-                  child: Text(
-                    "No Songs Added",
-                    style: GoogleFonts.montserrat(
-                        textStyle: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500)),
-                  ),
+    return Expanded(child: BlocBuilder<PlaylistSongsBloc, PlaylistSongsState>(
+      builder: (context, state) {
+        List<Songs>? songs = state.values[playlistindex].playlistssongs;
+        plstsongs.clear();
+
+        for (var element in songs!) {
+          plstsongs.add(Audio.file(element.songurl.toString(),
+              metas: Metas(
+                title: element.songname,
+                artist: element.artist,
+                id: element.id.toString(),
+              )));
+        }
+
+        if (songs.isEmpty) {
+          return Align(
+            heightFactor: 7.5,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Center(
+                child: Text(
+                  "No Songs Added",
+                  style: GoogleFonts.montserrat(
+                      textStyle: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500)),
                 ),
               ),
-            );
-          }
-          return ListView.separated(
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return ListTile(
+            ),
+          );
+        }
+        return ListView.separated(
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return ListTile(
+                onTap: () {
+                  player.open(
+                      Playlist(
+                        audios: plstsongs,
+                        startIndex: index,
+                      ),
+                      showNotification: true,
+                      loopMode: LoopMode.playlist,
+                      headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug);
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => MusicPlayScreen(index: index),
+                  ));
+                },
+                leading: QueryArtworkWidget(
+                  artworkFit: BoxFit.cover,
+                  id: songs[index].id!,
+                  type: ArtworkType.AUDIO,
+                  artworkQuality: FilterQuality.high,
+                  size: 2000,
+                  quality: 100,
+                  artworkBorder: BorderRadius.circular(50),
+                  nullArtworkWidget: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(50)),
+                    child: Image.asset(
+                      'assets/images/studio.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                title: SingleChildScrollView(
+                  child: Text(
+                    songs[index].songname!,
+                    maxLines: 1,
+                    style: GoogleFonts.montserrat(
+                      textStyle: const TextStyle(
+                          fontSize: 13.43,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ),
+                trailing: GestureDetector(
                   onTap: () {
-                    log(plsongs.toString());
-                    player.open(
-                        Playlist(
-                          audios: plstsongs,
-                          startIndex: index,
-                        ),
-                        showNotification: true,
-                        loopMode: LoopMode.playlist,
-                        headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug);
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => MusicPlayScreen(index: index),
-                    ));
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text("Delete Playlist"),
+                          content: const Text("Are You Sure"),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("Cancel")),
+                            TextButton(
+                                onPressed: () {
+                                  plstsongs.removeAt(index);
+                                  songs.removeWhere((element) =>
+                                      element.id == songs[index].id);
+                                  playlistbox.putAt(
+                                    playlistindex,
+                                    PlaylistSongs(
+                                      playlistname: playlistname,
+                                      playlistssongs: songs,
+                                    ),
+                                  );
+                                  BlocProvider.of<PlaylistSongsBloc>(context)
+                                      .add(PlaylistSongsInitialP());
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("Delete"))
+                          ],
+                        );
+                      },
+                    );
                   },
-                  leading: QueryArtworkWidget(
-                    artworkFit: BoxFit.cover,
-                    id: songs[index].id!,
-                    type: ArtworkType.AUDIO,
-                    artworkQuality: FilterQuality.high,
-                    size: 2000,
-                    quality: 100,
-                    artworkBorder: BorderRadius.circular(50),
-                    nullArtworkWidget: ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(50)),
-                      child: Image.asset(
-                        'assets/images/studio.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                  child: const Icon(
+                    Icons.delete,
+                    color: Colors.white,
                   ),
-                  title: SingleChildScrollView(
-                    child: Text(
-                      songs[index].songname!,
-                      maxLines: 1,
-                      style: GoogleFonts.montserrat(
-                        textStyle: const TextStyle(
-                            fontSize: 13.43,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                  ),
-                  trailing: GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text("Delete Playlist"),
-                            content: const Text("Are You Sure"),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text("Cancel")),
-                              TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      plstsongs.removeAt(index);
-                                      songs.removeWhere((element) =>
-                                          element.id == songs[index].id);
-                                      playlistbox.putAt(
-                                        widget.playlistindex,
-                                        PlaylistSongs(
-                                          playlistname: widget.playlistname,
-                                          playlistssongs: songs,
-                                        ),
-                                      );
-                                    });
+                ),
+              );
+            },
+            separatorBuilder: (context, index) {
+              return const Divider();
+            },
+            itemCount: songs.length);
+      },
+    )
+        // List<PlaylistSongs> plsongs = playlistbox.values.toList();
+        //? here taking which playlist and the songs
+        //  log(plsongs.toString());
 
-                                    setState(() {});
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text("Delete"))
-                            ],
-                          );
-                        },
-                      );
-                      //showAlertDialog(context);
-                    },
-                    child: const Icon(
-                      Icons.delete,
-                      color: Colors.white,
-
-                      // color: Color(Colors.white),
-                    ),
-                  ),
-                );
-              },
-              separatorBuilder: (context, index) {
-                return const Divider();
-              },
-              itemCount: songs.length);
-        },
-      ),
-    );
+        );
   }
 
   showAlertDialog(BuildContext context) {

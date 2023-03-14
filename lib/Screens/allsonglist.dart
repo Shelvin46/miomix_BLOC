@@ -137,7 +137,7 @@ class AllSongList extends StatelessWidget {
                         context: context,
                         builder: ((context) {
                           return SizedBox(
-                            height: 150 /* height * 0.13 */,
+                            height: 150,
                             child: Column(
                               children: [
                                 SizedBox(
@@ -166,8 +166,3 @@ class AllSongList extends StatelessWidget {
     );
   }
 }
-
-//   playerOnTap() {
-//     List<Songs> dbsongs = box.values.toList();
-//   }
-// }

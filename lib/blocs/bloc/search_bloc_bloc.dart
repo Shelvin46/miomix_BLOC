@@ -27,7 +27,7 @@ class SearchBlocBloc extends Bloc<SearchBlocEvent, SearchBlocState> {
             SearchBlocState(dbSongs: [], searchResults: [], isNull: true));
       } else {
         return emit(SearchBlocState(
-            dbSongs: [], searchResults: filteredValue, isNull: false));
+            dbSongs: values, searchResults: filteredValue, isNull: false));
       }
     });
   }
